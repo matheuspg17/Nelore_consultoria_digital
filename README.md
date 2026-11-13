@@ -1,6 +1,6 @@
 # 🚀 Nelore — Consultoria em Transformação Digital
 
-🔗 **Acesse o Aplicativo Online (GitHub Pages):** [Clique aqui para abrir o App](https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/)
+🔗 **Acesse o Aplicativo Online (GitHub Pages):** [Clique aqui para abrir o App](https://matheuspg17.github.io/Nelore_consultoria_digital/)
 
 ## 👥 Especialistas Responsáveis (Autores)
 - **Nome do Aluno(a) 1 Matheus Pereira
