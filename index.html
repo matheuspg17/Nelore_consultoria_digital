@@ -1,0 +1,1625 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nelore — Diagnóstico 360º de Maturidade Digital</title>
+<meta name="description" content="Nelore: diagnóstico 360º de maturidade digital em 4 pilares (Nuvem, ERP/CRM, IA e LGPD) com índice 0–100%, painel interativo e laudo técnico de boas práticas.">
+<meta name="theme-color" content="#0B0C0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B0C0A'/%3E%3Cpath d='M5 9c1.5 4 5 5.5 8.5 4.5M27 9c-1.5 4-5 5.5-8.5 4.5' stroke='%23EDE8DD' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M11 13h10l-2 10-3 3-3-3z' fill='%23C8F169'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<!-- TailwindCSS via CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0B0C0A', panel: '#121410', bone: '#EDE8DD', muted: '#8F8C82',
+          acc: '#C8F169', coral: '#FF6B5A', gold: '#F2B544',
+          infra: '#7CC6FE', sys: '#C8F169', ai: '#B79CFF', gov: '#F2A65A'
+        },
+        fontFamily: {
+          sans: ['Geist', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+          mono: ['"Geist Mono"', 'ui-monospace', 'Consolas', 'monospace']
+        }
+      }
+    }
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#0B0C0A; --panel:#121410; --line:rgba(237,232,221,.09); --line2:rgba(237,232,221,.17);
+    --bone:#EDE8DD; --muted:#8F8C82; --acc:#C8F169; --coral:#FF6B5A; --gold:#F2B544;
+  }
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{background:var(--ink);color:var(--bone);font-feature-settings:"ss01","cv11"}
+  ::selection{background:var(--acc);color:var(--ink)}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .lucide{stroke-width:1.75}
+  .section{scroll-margin-top:84px}
+
+  /* ---------- tipografia utilitária ---------- */
+  .eyebrow{font-family:"Geist Mono",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.8rem}
+  .eyebrow b{color:var(--acc);font-weight:500}
+  .eyebrow::after{content:"";height:1px;width:72px;background:var(--line2)}
+  .display{font-family:"Instrument Serif",Georgia,serif;font-weight:400;letter-spacing:-.02em;line-height:.95}
+  .display em{font-style:italic;color:var(--acc)}
+
+  /* ---------- superfícies ---------- */
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.008));border:1px solid var(--line);border-radius:22px}
+  .hairline{border-color:var(--line)}
+
+  /* ---------- botões ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;height:44px;padding:0 18px;border-radius:999px;font-weight:500;font-size:14.5px;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s,color .2s;white-space:nowrap;cursor:pointer;user-select:none}
+  .btn svg{width:17px;height:17px}
+  .btn-acc{background:var(--acc);color:#0B0C0A}
+  .btn-acc:hover{background:#D9FF84;transform:translateY(-1px);box-shadow:0 12px 32px -12px rgba(200,241,105,.7)}
+  .btn-ghost{border:1px solid var(--line2);color:var(--bone);background:rgba(255,255,255,.015)}
+  .btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(237,232,221,.32)}
+  .btn-sm{height:38px;padding:0 14px;font-size:13.5px}
+  .btn-icon{width:40px;padding:0}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:10px}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:50;border-bottom:1px solid transparent;transition:background .3s,border-color .3s,backdrop-filter .3s}
+  .nav.scrolled{background:rgba(11,12,10,.74);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);border-color:var(--line)}
+  .nav-link{font-size:14px;color:var(--muted);padding:6px 12px;border-radius:999px;transition:color .2s,background .2s}
+  .nav-link:hover{color:var(--bone)}
+  .nav-link.active{color:var(--bone);background:rgba(255,255,255,.06)}
+
+  /* ---------- hero ---------- */
+  .grid-bg{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 35%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 75% 65% at 50% 35%,#000 25%,transparent 78%)}
+  .glow{position:absolute;border-radius:50%;filter:blur(20px);pointer-events:none}
+  .chip-float{display:inline-flex;align-items:center;gap:.5rem;padding:8px 12px;border-radius:999px;background:rgba(18,20,16,.86);border:1px solid var(--line2);font-family:"Geist Mono",monospace;font-size:11.5px;letter-spacing:.04em;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 20px 40px -20px rgba(0,0,0,.8)}
+  .chip-float i{width:7px;height:7px;border-radius:99px;display:block}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .floaty{animation:floaty 6s ease-in-out infinite}
+  @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(200,241,105,.6)}100%{box-shadow:0 0 0 10px rgba(200,241,105,0)}}
+  .live-dot{width:7px;height:7px;border-radius:99px;background:var(--acc);animation:pulse-dot 1.8s ease-out infinite}
+
+  .marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .marquee-track{display:flex;width:max-content;animation:marq 48s linear infinite}
+  @keyframes marq{to{transform:translateX(-50%)}}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- método ---------- */
+  .pillar-card{position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+  .pillar-card:hover{border-color:color-mix(in srgb,var(--pc) 45%,transparent);transform:translateY(-3px)}
+  .pillar-card .num{font-family:"Instrument Serif",serif;font-size:96px;line-height:.8;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--pc) 55%,transparent);position:absolute;right:18px;top:18px;opacity:.6}
+
+  /* ---------- formulário ---------- */
+  .field{width:100%;height:50px;padding:0 16px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line2);color:var(--bone);font-size:15px;transition:border-color .2s,background .2s}
+  .field::placeholder{color:#6b6960}
+  .field:hover{border-color:rgba(237,232,221,.28)}
+  .field:focus{outline:none;border-color:var(--acc);background:rgba(200,241,105,.04);box-shadow:0 0 0 4px rgba(200,241,105,.1)}
+  select.field{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238F8C82' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+  select.field option{background:#121410;color:var(--bone)}
+  .label{display:block;font-family:"Geist Mono",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+
+  .qblock{padding:clamp(20px,3.6vw,38px);scroll-margin-top:96px;position:relative;overflow:hidden}
+  .qblock::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:linear-gradient(90deg,var(--pc),transparent 65%)}
+  .pill-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--pc) 13%,transparent);color:var(--pc);border:1px solid color-mix(in srgb,var(--pc) 30%,transparent)}
+  .pill-icon svg{width:22px;height:22px}
+
+  .q{border:0;padding:0;margin:0;min-width:0;border-radius:16px;transition:box-shadow .3s}
+  .q-title{display:flex;gap:.8rem;font-size:17px;font-weight:550;line-height:1.38;letter-spacing:-.01em;padding:0}
+  .q-num{font-family:"Geist Mono",monospace;font-size:12px;color:var(--pc);padding-top:4px;flex:none;min-width:1.6rem}
+  .q-help{font-size:13.5px;color:var(--muted);margin-top:.35rem;padding-left:2.4rem}
+  .q-body{margin-top:1rem}
+  @media(min-width:640px){.q-body{padding-left:2.4rem}}
+  @keyframes need{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .q.need{animation:need .5s ease;box-shadow:0 0 0 1px var(--coral),0 0 0 8px rgba(255,107,90,.08)}
+
+  .opt{display:block;cursor:pointer;height:100%}
+  .opt-card{display:flex;gap:14px;align-items:flex-start;height:100%;padding:14px 14px 14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.012);transition:border-color .2s,background .2s,box-shadow .2s,transform .15s}
+  .opt:hover .opt-card{border-color:rgba(237,232,221,.24);background:rgba(255,255,255,.03)}
+  .opt:active .opt-card{transform:scale(.99)}
+  .opt input:focus-visible + .opt-card{outline:2px solid var(--pc);outline-offset:2px}
+  .opt input:checked + .opt-card{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 8%,transparent);box-shadow:inset 0 0 0 1px var(--pc)}
+  .lvl{display:flex;gap:3px;align-items:flex-end;padding-top:5px;flex:none}
+  .lvl i{display:block;width:4px;border-radius:2px;background:rgba(237,232,221,.1)}
+  .lvl i:nth-child(1){height:6px}.lvl i:nth-child(2){height:9px}.lvl i:nth-child(3){height:12px}.lvl i:nth-child(4){height:15px}
+  .lvl i.on{background:rgba(237,232,221,.45)}
+  .opt input:checked + .opt-card .lvl i.on{background:var(--pc)}
+  .opt-dot{width:22px;height:22px;border-radius:99px;border:1.5px solid var(--line2);display:grid;place-items:center;flex:none;transition:all .2s}
+  .opt-dot svg{width:13px;height:13px;opacity:0;color:#0B0C0A;stroke-width:3}
+  .opt input:checked + .opt-card .opt-dot{background:var(--pc);border-color:var(--pc)}
+  .opt input:checked + .opt-card .opt-dot svg{opacity:1}
+
+  .chk{display:block;cursor:pointer}
+  .chk-card{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.012);font-size:14.5px;line-height:1.35;transition:all .2s;height:100%}
+  .chk:hover .chk-card{border-color:rgba(237,232,221,.24);background:rgba(255,255,255,.03)}
+  .chk input:focus-visible + .chk-card{outline:2px solid var(--pc);outline-offset:2px}
+  .chk-box{width:20px;height:20px;border-radius:6px;border:1.5px solid rgba(237,232,221,.3);display:grid;place-items:center;flex:none;transition:all .2s}
+  .chk-box svg{width:13px;height:13px;opacity:0;color:#0B0C0A;stroke-width:3}
+  .chk input:checked + .chk-card{border-color:color-mix(in srgb,var(--pc) 60%,transparent);background:color-mix(in srgb,var(--pc) 6%,transparent)}
+  .chk input:checked + .chk-card .chk-box{background:var(--pc);border-color:var(--pc)}
+  .chk input:checked + .chk-card .chk-box svg{opacity:1}
+
+  .rng{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;outline:none;cursor:pointer;
+    background:linear-gradient(to right,var(--pc) 0%,var(--pc) var(--val,40%),rgba(237,232,221,.1) var(--val,40%))}
+  .rng::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--bone);border:5px solid var(--pc);box-shadow:0 0 0 6px color-mix(in srgb,var(--pc) 18%,transparent);transition:transform .15s}
+  .rng::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  .rng::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--bone);border:5px solid var(--pc);box-shadow:0 0 0 6px color-mix(in srgb,var(--pc) 18%,transparent)}
+  .rng:focus-visible{outline:2px solid var(--pc);outline-offset:8px}
+
+  .side-p{display:grid;grid-template-columns:10px 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;transition:background .2s}
+  .side-p:hover{background:rgba(255,255,255,.04)}
+  .bar{height:5px;border-radius:99px;background:rgba(237,232,221,.08);overflow:hidden}
+  .bar > span{display:block;height:100%;border-radius:99px;width:0;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+
+  /* ---------- painel ---------- */
+  .gauge-track{stroke:rgba(237,232,221,.07)}
+  .gauge-val{transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1),stroke .6s}
+  .stage-badge{display:inline-flex;align-items:center;gap:.5rem;padding:7px 14px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid}
+  .scale-seg{height:8px;border-radius:2px}
+  .scale-marker{position:absolute;top:-6px;width:3px;height:20px;border-radius:2px;background:var(--bone);transform:translateX(-50%);transition:left 1.3s cubic-bezier(.2,.7,.2,1);box-shadow:0 0 0 3px var(--ink)}
+  .tier{font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid}
+  .prio{font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:999px;font-weight:500;white-space:nowrap}
+  .locked-ring{background:conic-gradient(var(--acc) var(--p,0%),rgba(237,232,221,.08) 0)}
+
+  /* ---------- laudo (papel) ---------- */
+  .paper{background:#F5F1E8;color:#1C1B17;border-radius:6px;position:relative;box-shadow:0 60px 120px -50px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04)}
+  .paper .pm{color:#6C685D}
+  .paper .rule{border-top:1.5px solid #1C1B17}
+  .paper .hair{border-color:rgba(28,27,23,.14)}
+  .paper h2{font-family:"Instrument Serif",serif;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+  .paper .sec-n{font-family:"Geist Mono",monospace;font-size:11px;letter-spacing:.16em;color:#6C685D}
+  .pchip{font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:999px;font-weight:500;white-space:nowrap}
+  .pr1{background:#F8D9D2;color:#9A2414}.pr2{background:#F6E3C6;color:#82450A}.pr3{background:#D9E7F4;color:#1C527E}.pr4{background:#E1ECC4;color:#43600D}
+  .hz{border:1px solid rgba(28,27,23,.22);color:#4A473F}
+  .tag{font-family:"Geist Mono",monospace;font-size:10.5px;color:#6C685D}
+  .stamp{position:absolute;top:28px;right:28px;width:118px;height:118px;color:#1C1B17;opacity:.85;transform:rotate(-12deg)}
+  .print-only{display:none}
+
+  #toast{transition:opacity .3s,transform .3s}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+  }
+
+  /* ---------- impressão / PDF ---------- */
+  @media print{
+    @page{size:A4;margin:12mm}
+    html,body{background:#fff!important}
+    body::before,.no-print,#mbar,#toast{display:none!important}
+    #laudo{padding:0!important;margin:0!important;max-width:none!important;border:0!important}
+    #laudo > div{padding:0!important;max-width:none!important}
+    .paper > #paper-body{color:#1C1B17}
+    .paper{box-shadow:none!important;border-radius:0!important;padding:0!important;background:#fff!important}
+    .stamp{top:0;right:0}
+    .screen-only{display:none!important}
+    .print-only{display:block!important}
+    .reveal{opacity:1!important;transform:none!important}
+    .avoid{break-inside:avoid;page-break-inside:avoid}
+    .page-break{break-before:page;page-break-before:always}
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+
+<!-- ================= NAV ================= -->
+<header id="nav" class="nav no-print">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <a href="#topo" class="flex items-center gap-3 shrink-0" aria-label="Nelore — início">
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#171914" stroke="rgba(237,232,221,.14)"/><path d="M5 9c1.5 4 5 5.5 8.5 4.5M27 9c-1.5 4-5 5.5-8.5 4.5" stroke="#EDE8DD" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M11 13h10l-2 10-3 3-3-3z" fill="#C8F169"/></svg>
+      <span class="leading-none">
+        <span class="block font-serif text-[26px] tracking-tight">Nelore</span>
+        <span class="hidden sm:block font-mono text-[9.5px] tracking-[.2em] text-muted uppercase mt-0.5">Consultoria Digital</span>
+      </span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1" aria-label="Seções">
+      <a href="#metodo" class="nav-link" data-sec="metodo">Método</a>
+      <a href="#diagnostico" class="nav-link" data-sec="diagnostico">Diagnóstico</a>
+      <a href="#painel" class="nav-link" data-sec="painel">Painel</a>
+      <a href="#laudo" class="nav-link" data-sec="laudo">Laudo</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button type="button" class="btn btn-ghost btn-sm js-demo"><i data-lucide="play"></i><span class="hidden sm:inline">Caso exemplo</span><span class="sm:hidden">Demo</span></button>
+      <button type="button" class="btn btn-acc btn-sm btn-icon sm:w-auto sm:px-[14px] js-print" aria-label="Imprimir ou salvar laudo em PDF"><i data-lucide="printer"></i><span class="hidden sm:inline">Laudo PDF</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="topo">
+
+<!-- ================= HERO ================= -->
+<section class="relative overflow-hidden no-print">
+  <div class="absolute inset-0 grid-bg" aria-hidden="true"></div>
+  <div class="glow w-[720px] h-[720px] -top-64 -right-40 opacity-70" style="background:radial-gradient(circle,rgba(200,241,105,.16),transparent 62%)" aria-hidden="true"></div>
+  <div class="glow w-[600px] h-[600px] top-40 -left-72 opacity-60" style="background:radial-gradient(circle,rgba(183,156,255,.12),transparent 62%)" aria-hidden="true"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 sm:pt-40 pb-16 lg:pb-24 grid lg:grid-cols-12 gap-14 lg:gap-8 items-center">
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2.5 rounded-full border hairline bg-white/[.03] pl-2 pr-4 py-1.5 reveal">
+        <span class="rounded-full bg-acc text-ink font-mono text-[10.5px] font-semibold tracking-wider px-2 py-0.5">360º</span>
+        <span class="text-[13px] text-muted">Diagnóstico de Maturidade Digital para PMEs</span>
+      </div>
+      <h1 class="display text-[clamp(3.1rem,8.4vw,6.6rem)] mt-7 reveal">Da planilha solta à <em>liderança digital</em>.</h1>
+      <p class="mt-7 text-[17px] sm:text-lg text-muted max-w-xl leading-relaxed reveal">
+        O <span class="text-bone">Nelore</span> avalia sua empresa em quatro pilares (<span class="text-bone">Nuvem, ERP/CRM, IA e LGPD</span>), calcula o Índice de Maturidade Digital de 0 a 100% e emite um laudo técnico com plano de ação priorizado. Leva uns 5 minutos e roda direto no seu navegador.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3 reveal">
+        <a href="#diagnostico" class="btn btn-acc h-[52px] px-6 text-[15px]">Iniciar diagnóstico <i data-lucide="arrow-right"></i></a>
+        <button type="button" class="btn btn-ghost h-[52px] px-6 text-[15px] js-demo"><i data-lucide="play"></i> Carregar caso exemplo</button>
+      </div>
+      <dl class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden border hairline max-w-2xl reveal" style="background:var(--line)">
+        <div class="bg-ink p-4 sm:p-5"><dt class="font-mono text-2xl sm:text-3xl">12</dt><dd class="text-xs text-muted mt-1">perguntas estratégicas</dd></div>
+        <div class="bg-ink p-4 sm:p-5"><dt class="font-mono text-2xl sm:text-3xl">4</dt><dd class="text-xs text-muted mt-1">pilares de boas práticas</dd></div>
+        <div class="bg-ink p-4 sm:p-5"><dt class="font-mono text-2xl sm:text-3xl">50+</dt><dd class="text-xs text-muted mt-1">recomendações técnicas</dd></div>
+        <div class="bg-ink p-4 sm:p-5"><dt class="font-mono text-2xl sm:text-3xl text-acc">0</dt><dd class="text-xs text-muted mt-1">bytes enviados a servidores</dd></div>
+      </dl>
+    </div>
+
+    <!-- Arte do hero: radar vivo -->
+    <div class="lg:col-span-5 relative reveal" aria-hidden="true">
+      <div class="card p-5 sm:p-6 relative z-10 bg-panel/80 max-w-md mx-auto">
+        <div class="flex items-center justify-between">
+          <div class="flex gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/10"></span><span class="w-2.5 h-2.5 rounded-full bg-white/10"></span><span class="w-2.5 h-2.5 rounded-full bg-white/10"></span></div>
+          <span class="font-mono text-[11px] text-muted tracking-wider">nelore / painel-360</span>
+          <span class="flex items-center gap-2 font-mono text-[10.5px] text-acc tracking-widest"><span class="live-dot"></span>AO VIVO</span>
+        </div>
+        <svg viewBox="0 0 320 320" class="w-full mt-4">
+          <defs>
+            <radialGradient id="hg" cx="50%" cy="50%" r="55%"><stop offset="0" stop-color="#C8F169" stop-opacity=".42"/><stop offset="1" stop-color="#C8F169" stop-opacity=".04"/></radialGradient>
+          </defs>
+          <g fill="none" stroke="rgba(237,232,221,.09)">
+            <polygon points="160,40 280,160 160,280 40,160"/>
+            <polygon points="160,70 250,160 160,250 70,160"/>
+            <polygon points="160,100 220,160 160,220 100,160"/>
+            <polygon points="160,130 190,160 160,190 130,160"/>
+            <path d="M160 40V280M40 160H280"/>
+          </g>
+          <polygon points="160,160 160,160 160,160 160,160" fill="url(#hg)" stroke="#C8F169" stroke-width="1.6" stroke-linejoin="round">
+            <animate attributeName="points" dur="10s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines=".45 0 .2 1;.45 0 .2 1;.45 0 .2 1"
+              values="160,106 244,160 160,202 94,160;160,64 232,160 160,250 100,160;160,88 268,160 160,226 64,160;160,106 244,160 160,202 94,160"/>
+          </polygon>
+          <g font-family="Geist Mono, monospace" font-size="10" letter-spacing="1.5" text-anchor="middle">
+            <text x="160" y="26" fill="#7CC6FE">NUVEM</text>
+            <text x="296" y="164" fill="#C8F169" text-anchor="end">ERP</text>
+            <text x="160" y="303" fill="#B79CFF">IA</text>
+            <text x="24" y="164" fill="#F2A65A" text-anchor="start">LGPD</text>
+          </g>
+        </svg>
+        <div class="grid grid-cols-2 gap-2 mt-3 text-[12px] text-muted">
+          <span class="flex items-center gap-2"><i class="w-2 h-2 rounded-full bg-infra"></i>Infraestrutura & Nuvem</span>
+          <span class="flex items-center gap-2"><i class="w-2 h-2 rounded-full bg-sys"></i>Sistemas ERP/CRM</span>
+          <span class="flex items-center gap-2"><i class="w-2 h-2 rounded-full bg-ai"></i>IA & Automação</span>
+          <span class="flex items-center gap-2"><i class="w-2 h-2 rounded-full bg-gov"></i>Governança & LGPD</span>
+        </div>
+      </div>
+      <span class="chip-float floaty absolute z-20 -top-4 left-0 sm:-left-6 hidden sm:inline-flex"><i class="bg-infra"></i>Backup 3-2-1</span>
+      <span class="chip-float floaty absolute z-20 top-1/3 -right-2 sm:-right-8 hidden sm:inline-flex" style="animation-delay:-2s"><i class="bg-gov"></i>MFA em tudo</span>
+      <span class="chip-float floaty absolute z-20 bottom-24 -left-2 sm:-left-10 hidden sm:inline-flex" style="animation-delay:-4s"><i class="bg-sys"></i>ERP ↔ CRM</span>
+      <span class="chip-float floaty absolute z-20 -bottom-5 right-6 hidden sm:inline-flex" style="animation-delay:-1s"><i class="bg-ai"></i>Human-in-the-Loop</span>
+    </div>
+  </div>
+
+  <div class="relative border-y hairline py-5 marquee" aria-hidden="true">
+    <div class="marquee-track font-mono text-[12.5px] tracking-[.16em] uppercase text-muted">
+      <div class="flex gap-10 pr-10" id="marq"></div>
+      <div class="flex gap-10 pr-10" id="marq2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MÉTODO ================= -->
+<section id="metodo" class="section no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+  <div class="grid lg:grid-cols-12 gap-10 items-end">
+    <div class="lg:col-span-7">
+      <p class="eyebrow reveal"><b>§ 01</b> Método</p>
+      <h2 class="display text-[clamp(2.5rem,5.5vw,4.4rem)] mt-5 reveal">Quatro pilares.<br><em>Uma régua única.</em></h2>
+    </div>
+    <p class="lg:col-span-5 text-muted text-[16.5px] leading-relaxed reveal">
+      Transformação digital não é comprar ferramenta. É tirar o risco da infraestrutura, fazer os sistemas conversarem, devolver tempo às pessoas e proteger quem confia dados à empresa. O Nelore mede os quatro ao mesmo tempo, porque um pilar fraco segura os outros.
+    </p>
+  </div>
+
+  <div id="pillar-cards" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-14"></div>
+
+  <div class="grid lg:grid-cols-12 gap-4 mt-4">
+    <div class="card p-6 sm:p-8 lg:col-span-8 reveal">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <h3 class="text-lg font-semibold">Estágios de maturidade</h3>
+        <span class="font-mono text-xs text-muted">Índice 0–100%</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6" id="stage-legend"></div>
+    </div>
+    <div class="card p-6 sm:p-8 lg:col-span-4 reveal">
+      <h3 class="text-lg font-semibold flex items-center gap-2"><i data-lucide="sigma" class="w-5 h-5 text-acc"></i>Como o índice é calculado</h3>
+      <ol class="mt-5 space-y-3 text-[14.5px] text-muted leading-relaxed">
+        <li class="flex gap-3"><span class="font-mono text-acc text-xs pt-1">01</span>Cada resposta vira uma nota de 0 a 100 (níveis, sliders e checklists).</li>
+        <li class="flex gap-3"><span class="font-mono text-acc text-xs pt-1">02</span>A nota do pilar é a média das suas 3 respostas.</li>
+        <li class="flex gap-3"><span class="font-mono text-acc text-xs pt-1">03</span>O Índice de Maturidade é a média dos 4 pilares, com pesos iguais.</li>
+        <li class="flex gap-3"><span class="font-mono text-acc text-xs pt-1">04</span>Regras de especialista cruzam respostas, setor e porte para montar o plano.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIAGNÓSTICO ================= -->
+<section id="diagnostico" class="section no-print border-t hairline">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <div class="grid lg:grid-cols-12 gap-10 items-end">
+      <div class="lg:col-span-7">
+        <p class="eyebrow reveal"><b>§ 02</b> Diagnóstico</p>
+        <h2 class="display text-[clamp(2.5rem,5.5vw,4.4rem)] mt-5 reveal">Responda como quem<br><em>conhece a operação.</em></h2>
+      </div>
+      <p class="lg:col-span-5 text-muted text-[16.5px] leading-relaxed reveal">
+        São 8 perguntas-chave e 4 complementares. O painel é calculado em tempo real a cada clique, sem recarregar a página e sem enviar nada para fora do seu navegador.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-[290px_minmax(0,1fr)] gap-6 lg:gap-10 mt-14 items-start">
+      <!-- Sidebar -->
+      <aside class="lg:sticky lg:top-24 space-y-4 hidden lg:block">
+        <div class="card p-5">
+          <div class="flex items-center justify-between">
+            <span class="label !mb-0">Progresso</span>
+            <span class="font-mono text-sm"><span id="sb-count">0</span>/<span id="sb-total">8</span></span>
+          </div>
+          <div class="bar mt-3"><span id="sb-bar" style="background:var(--acc)"></span></div>
+          <p class="text-xs text-muted mt-3" id="sb-hint">Responda as perguntas-chave para liberar o painel.</p>
+          <div class="mt-5 space-y-0.5" id="sb-pillars"></div>
+          <div class="mt-5 pt-5 border-t hairline flex items-end justify-between">
+            <div>
+              <span class="label !mb-1" id="sb-ov-label">Índice parcial</span>
+              <span class="font-mono text-4xl" id="sb-ov">—</span>
+            </div>
+            <span class="text-xs font-medium" id="sb-stage"></span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <a href="#painel" class="btn btn-acc flex-1 js-generate">Ver resultado <i data-lucide="arrow-down-right"></i></a>
+          <button type="button" class="btn btn-ghost btn-icon js-reset" aria-label="Limpar respostas" title="Limpar respostas"><i data-lucide="rotate-ccw"></i></button>
+        </div>
+      </aside>
+
+      <!-- Formulário -->
+      <form id="diag-form" class="space-y-6 min-w-0" novalidate>
+        <section class="qblock card reveal" id="blk-id" style="--pc:#EDE8DD">
+          <div class="flex items-start gap-4">
+            <span class="pill-icon"><i data-lucide="building-2"></i></span>
+            <div>
+              <p class="font-mono text-xs tracking-[.18em] text-muted uppercase">Etapa 00</p>
+              <h3 class="text-xl sm:text-2xl font-semibold tracking-tight mt-1">Identificação do cliente</h3>
+              <p class="text-sm text-muted mt-1">Esses dados personalizam o laudo e as recomendações por setor e porte.</p>
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5 mt-8">
+            <div class="sm:col-span-2">
+              <label class="label" for="f-name">Nome da empresa</label>
+              <input id="f-name" class="field" type="text" autocomplete="organization" placeholder="Ex.: Laticínios Serra Azul Ltda." maxlength="80">
+            </div>
+            <div>
+              <label class="label" for="f-sector">Setor de atuação</label>
+              <select id="f-sector" class="field"><option value="">Selecione…</option></select>
+            </div>
+            <div>
+              <label class="label" for="f-emp">Nº de colaboradores</label>
+              <div class="relative">
+                <input id="f-emp" class="field pr-32" type="number" inputmode="numeric" min="1" max="100000" placeholder="Ex.: 45">
+                <span id="porte-chip" class="absolute right-2.5 top-1/2 -translate-y-1/2 font-mono text-[10.5px] tracking-wider uppercase px-2.5 py-1 rounded-full border hairline text-muted">Porte —</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div id="pillars-form" class="space-y-6"></div>
+
+        <div class="card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 reveal">
+          <div>
+            <h3 class="text-xl font-semibold">Pronto? Gere o painel e o laudo.</h3>
+            <p class="text-sm text-muted mt-1">Você pode voltar e mudar qualquer resposta. Tudo se recalcula na hora.</p>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button type="button" class="btn btn-ghost js-reset"><i data-lucide="rotate-ccw"></i>Limpar</button>
+            <a href="#painel" class="btn btn-acc flex-1 sm:flex-none js-generate">Gerar diagnóstico <i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAINEL ================= -->
+<section id="painel" class="section no-print border-t hairline relative overflow-hidden">
+  <div class="glow w-[800px] h-[800px] -top-96 left-1/2 -translate-x-1/2 opacity-50" style="background:radial-gradient(circle,rgba(124,198,254,.10),transparent 60%)" aria-hidden="true"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div>
+        <p class="eyebrow reveal"><b>§ 03</b> Painel</p>
+        <h2 class="display text-[clamp(2.5rem,5.5vw,4.4rem)] mt-5 reveal">Painel de <em>maturidade</em></h2>
+        <p class="text-muted mt-3 reveal" id="dash-sub">Os resultados aparecem aqui assim que o diagnóstico estiver completo.</p>
+      </div>
+      <div class="flex gap-2 reveal">
+        <a href="#laudo" class="btn btn-ghost"><i data-lucide="file-text"></i>Ver laudo</a>
+        <button type="button" class="btn btn-acc js-print"><i data-lucide="printer"></i>Imprimir / Salvar PDF</button>
+      </div>
+    </div>
+
+    <!-- Estado bloqueado -->
+    <div id="dash-locked" class="card mt-12 p-8 sm:p-14 text-center reveal">
+      <div class="locked-ring w-28 h-28 rounded-full mx-auto grid place-items-center" id="lk-ring" style="--p:0%">
+        <div class="w-[100px] h-[100px] rounded-full bg-ink grid place-items-center">
+          <span class="font-mono text-2xl"><span id="lk-count">0</span><span class="text-muted text-base">/8</span></span>
+        </div>
+      </div>
+      <h3 class="text-2xl font-semibold mt-7">O painel está aguardando suas respostas</h3>
+      <p class="text-muted mt-2 max-w-md mx-auto">Responda as 8 perguntas-chave do diagnóstico ou carregue uma empresa de exemplo para ver o painel completo.</p>
+      <div class="flex flex-wrap justify-center gap-3 mt-8">
+        <a href="#diagnostico" class="btn btn-ghost">Ir para o diagnóstico</a>
+        <button type="button" class="btn btn-acc js-demo"><i data-lucide="play"></i>Carregar caso exemplo</button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dash" class="hidden mt-12 grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Score -->
+      <div class="card p-6 sm:p-8 lg:col-span-5 flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="label !mb-0">Índice de Maturidade Digital</span>
+          <i data-lucide="gauge" class="w-5 h-5 text-muted"></i>
+        </div>
+        <div class="relative w-[230px] h-[230px] mx-auto mt-6">
+          <svg viewBox="0 0 200 200" class="w-full h-full -rotate-90">
+            <g id="ticks"></g>
+            <circle cx="100" cy="100" r="80" fill="none" stroke-width="12" class="gauge-track"/>
+            <circle id="gauge" cx="100" cy="100" r="80" fill="none" stroke-width="12" stroke-linecap="round" class="gauge-val" stroke="#C8F169" stroke-dasharray="502.65" stroke-dashoffset="502.65" style="filter:drop-shadow(0 0 10px rgba(200,241,105,.35))"/>
+          </svg>
+          <div class="absolute inset-0 grid place-items-center text-center">
+            <div>
+              <div class="font-mono text-[64px] leading-none tracking-tight"><span id="d-score" data-v="0">0</span><span class="text-2xl text-muted">%</span></div>
+              <div class="font-mono text-[10.5px] tracking-[.2em] text-muted uppercase mt-2">maturidade</div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-5"><span class="stage-badge" id="d-stage">—</span></div>
+        <div class="mt-8">
+          <div class="relative">
+            <div class="grid gap-1" style="grid-template-columns:40fr 20fr 20fr 20fr">
+              <span class="scale-seg" style="background:#FF6B5A"></span><span class="scale-seg" style="background:#F2B544"></span><span class="scale-seg" style="background:#7CC6FE"></span><span class="scale-seg" style="background:#C8F169"></span>
+            </div>
+            <span class="scale-marker" id="d-marker" style="left:0%"></span>
+          </div>
+          <div class="grid gap-1 mt-2 font-mono text-[10px] text-muted uppercase tracking-wider" style="grid-template-columns:40fr 20fr 20fr 20fr">
+            <span>Iniciante</span><span>Transição</span><span>Conectada</span><span>Líder</span>
+          </div>
+        </div>
+        <p class="text-[14.5px] text-muted leading-relaxed mt-6" id="d-desc"></p>
+      </div>
+
+      <!-- Radar -->
+      <div class="card p-6 sm:p-8 lg:col-span-7 flex flex-col">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="label !mb-1">Radar dos 4 pilares</span>
+            <p class="text-sm text-muted">Sua empresa × meta de Líder Digital (80%)</p>
+          </div>
+          <i data-lucide="radar" class="w-5 h-5 text-muted"></i>
+        </div>
+        <div class="relative flex-1 min-h-[340px] sm:min-h-[400px] mt-4"><canvas id="radar" aria-label="Gráfico radar com a nota de cada pilar" role="img"></canvas></div>
+      </div>
+
+      <!-- Pilares -->
+      <div class="lg:col-span-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4" id="d-pillars"></div>
+
+      <!-- Nuvem -->
+      <div class="card p-6 sm:p-8 lg:col-span-5">
+        <div class="flex items-center justify-between">
+          <span class="label !mb-0">Modelo de nuvem indicado</span>
+          <i data-lucide="cloud-cog" class="w-5 h-5 text-muted"></i>
+        </div>
+        <div class="mt-6 space-y-4" id="d-cloud"></div>
+        <p class="text-[13.5px] text-muted leading-relaxed mt-6 pt-5 border-t hairline" id="d-cloud-txt"></p>
+      </div>
+
+      <!-- Automação -->
+      <div class="card p-6 sm:p-8 lg:col-span-3 flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="label !mb-0">Potencial de automação</span>
+          <i data-lucide="timer" class="w-5 h-5 text-muted"></i>
+        </div>
+        <div class="mt-6">
+          <div class="font-mono text-5xl tracking-tight text-ai"><span id="d-auto" data-v="0">0</span></div>
+          <p class="text-sm text-muted mt-1">horas/mês liberáveis com IA e No-Code</p>
+        </div>
+        <div class="mt-5 pt-5 border-t hairline">
+          <div class="font-mono text-2xl"><span id="d-fte" >0</span></div>
+          <p class="text-sm text-muted mt-1">equivalente em colaboradores de tempo integral</p>
+        </div>
+        <div class="mt-5 pt-5 border-t hairline">
+          <div class="font-mono text-2xl text-sys"><span id="d-rework" data-v="0">0</span><span class="text-sm text-muted"> h/mês</span></div>
+          <p class="text-sm text-muted mt-1">gastas hoje em redigitação e conciliação</p>
+        </div>
+        <p class="text-[11.5px] text-muted/80 mt-auto pt-5 leading-snug" id="d-auto-note">Premissas: 4,33 semanas/mês, 220 h/mês por colaborador e 50% das tarefas repetitivas automatizáveis.</p>
+      </div>
+
+      <!-- Top prioridades -->
+      <div class="card p-6 sm:p-8 lg:col-span-4 flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="label !mb-0">Prioridades imediatas</span>
+          <i data-lucide="target" class="w-5 h-5 text-muted"></i>
+        </div>
+        <ol class="mt-6 space-y-4" id="d-top"></ol>
+        <a href="#laudo" class="btn btn-ghost w-full mt-6">Plano completo no laudo <i data-lucide="arrow-down-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LAUDO ================= -->
+<section id="laudo" class="section border-t hairline">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 no-print">
+      <div>
+        <p class="eyebrow reveal"><b>§ 04</b> Laudo</p>
+        <h2 class="display text-[clamp(2.5rem,5.5vw,4.4rem)] mt-5 reveal">Laudo <em>técnico</em></h2>
+        <p class="text-muted mt-3 max-w-lg reveal">Documento pronto para apresentar à diretoria. Exporte em PDF pelo botão abaixo, escolhendo “Salvar como PDF” na janela de impressão.</p>
+      </div>
+      <button type="button" class="btn btn-acc h-[52px] px-6 reveal js-print"><i data-lucide="printer"></i>Imprimir / Exportar Laudo em PDF</button>
+    </div>
+
+    <article id="paper" class="paper mt-12 px-5 py-8 sm:p-12 lg:p-16">
+      <div id="paper-empty" class="text-center py-16 sm:py-24">
+        <i data-lucide="file-text" class="w-10 h-10 mx-auto text-[#A6A194]"></i>
+        <h3 class="font-serif text-3xl mt-5">O laudo será emitido aqui</h3>
+        <p class="pm mt-2 max-w-sm mx-auto">Complete o diagnóstico ou carregue o caso exemplo para gerar o Laudo Técnico de Boas Práticas.</p>
+      </div>
+
+      <div id="paper-body" class="hidden">
+        <!-- carimbo -->
+        <svg class="stamp hidden sm:block" viewBox="0 0 120 120" aria-hidden="true">
+          <defs><path id="circ" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs>
+          <circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="60" cy="60" r="37" fill="none" stroke="currentColor" stroke-width=".8"/>
+          <text font-family="Geist Mono, monospace" font-size="8.4" fill="currentColor" letter-spacing="1"><textPath href="#circ" textLength="290" lengthAdjust="spacing">NELORE · LAUDO TÉCNICO · DIAGNÓSTICO 360º ·</textPath></text>
+          <g transform="translate(44 44)"><path d="M3 7c1.2 3.2 4 4.4 6.8 3.6M29 7c-1.2 3.2-4 4.4-6.8 3.6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M11 10.5h10l-2 9.5-3 3-3-3z" fill="currentColor"/></g>
+        </svg>
+
+        <header>
+          <div class="flex items-center gap-3">
+            <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#1C1B17"/><path d="M5 9c1.5 4 5 5.5 8.5 4.5M27 9c-1.5 4-5 5.5-8.5 4.5" stroke="#F5F1E8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M11 13h10l-2 10-3 3-3-3z" fill="#C8F169"/></svg>
+            <div class="leading-tight">
+              <div class="font-serif text-2xl">Nelore</div>
+              <div class="font-mono text-[9.5px] tracking-[.2em] uppercase pm">Consultoria em Transformação Digital</div>
+            </div>
+          </div>
+          <div class="mt-10 font-mono text-[11px] tracking-[.16em] uppercase pm">Laudo nº <span id="l-id">—</span> · Emitido em <span id="l-date">—</span></div>
+          <h1 class="font-serif text-[clamp(2.3rem,6vw,3.6rem)] leading-[1] tracking-tight mt-3 sm:pr-36">Laudo Técnico de Maturidade Digital</h1>
+          <div class="rule mt-8"></div>
+          <dl class="grid grid-cols-2 md:grid-cols-4" id="l-client"></dl>
+          <div class="hair border-t"></div>
+        </header>
+
+        <!-- 1. Sumário -->
+        <section class="mt-12 avoid">
+          <div class="sec-n">01 — SUMÁRIO EXECUTIVO</div>
+          <div class="grid md:grid-cols-[220px_1fr] gap-8 mt-4 items-start">
+            <div class="rounded-md p-6 text-center" id="l-scorebox" style="background:#1C1B17;color:#F5F1E8">
+              <div class="font-mono text-[10px] tracking-[.2em] uppercase opacity-60">Índice de Maturidade</div>
+              <div class="font-mono text-6xl mt-3 leading-none"><span id="l-score">0</span><span class="text-2xl opacity-60">%</span></div>
+              <div class="mt-4 inline-block rounded-full px-3 py-1 text-[13px] font-semibold" id="l-stage">—</div>
+            </div>
+            <div>
+              <h2 id="l-headline">—</h2>
+              <p class="mt-4 text-[15px] leading-relaxed" id="l-summary"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Pilares -->
+        <section class="mt-14 avoid">
+          <div class="sec-n">02 — DESEMPENHO POR PILAR</div>
+          <div class="grid md:grid-cols-2 gap-8 mt-5 items-center">
+            <div id="l-table"></div>
+            <div>
+              <div class="relative h-[230px] screen-only"><canvas id="l-chart" aria-label="Gráfico de barras com a nota de cada pilar" role="img"></canvas></div>
+              <img id="l-chart-img" class="print-only w-full" alt="Gráfico de barras com a nota de cada pilar">
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Nuvem -->
+        <section class="mt-14 avoid">
+          <div class="sec-n">03 — ESTRATÉGIA DE NUVEM</div>
+          <div class="grid md:grid-cols-2 gap-8 mt-4">
+            <div>
+              <h2 id="l-cloud-title">—</h2>
+              <p class="mt-4 text-[14.5px] leading-relaxed" id="l-cloud-txt"></p>
+              <div class="mt-5 space-y-2" id="l-cloud-fit"></div>
+            </div>
+            <div>
+              <div class="font-mono text-[11px] tracking-[.14em] uppercase pm">Roteiro seguro de migração</div>
+              <ol class="mt-3" id="l-migration"></ol>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Plano -->
+        <section class="mt-14 page-break">
+          <div class="sec-n">04 — PLANO DE BOAS PRÁTICAS DO ESPECIALISTA</div>
+          <h2 class="mt-3">Recomendações priorizadas por pilar</h2>
+          <p class="pm text-[14px] mt-2">Prioridade: <span class="pchip pr1">Crítica</span> <span class="pchip pr2">Alta</span> <span class="pchip pr3">Média</span> <span class="pchip pr4">Evolução</span></p>
+          <div class="mt-8 space-y-12" id="l-recs"></div>
+        </section>
+
+        <!-- 5. Roadmap -->
+        <section class="mt-14 avoid">
+          <div class="sec-n">05 — ROTEIRO DE IMPLEMENTAÇÃO</div>
+          <h2 class="mt-3">O que fazer, e quando</h2>
+          <div class="grid md:grid-cols-3 gap-6 mt-6" id="l-roadmap"></div>
+        </section>
+
+        <!-- 6. Premissas + assinatura -->
+        <section class="mt-14 avoid">
+          <div class="rule"></div>
+          <div class="grid md:grid-cols-2 gap-8 mt-6 text-[12.5px] leading-relaxed pm">
+            <div>
+              <div class="font-mono text-[10.5px] tracking-[.14em] uppercase text-[#1C1B17]">Metodologia e premissas</div>
+              <p class="mt-2">Índice = média simples dos 4 pilares; cada pilar = média de 3 respostas normalizadas de 0 a 100. Estágios: Iniciante (0–39), Em Transição (40–59), Conectada (60–79) e Líder Digital (80–100). Porte segundo critério SEBRAE por nº de colaboradores. Estimativas de horas consideram 4,33 semanas/mês, 220 h/mês e 50% de tarefas automatizáveis. São indicativas e não substituem uma avaliação técnica presencial.</p>
+            </div>
+            <div>
+              <div class="font-mono text-[10.5px] tracking-[.14em] uppercase text-[#1C1B17]">Privacy by Design (LGPD)</div>
+              <p class="mt-2">Este laudo foi gerado inteiramente no navegador do cliente. Nenhuma resposta foi transmitida, armazenada em servidor ou compartilhada com terceiros.</p>
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-10 mt-14" id="l-sign"></div>
+        </section>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="no-print border-t hairline relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+    <div class="grid lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-6">
+        <div class="inline-flex items-start gap-4 card p-5 pr-6" style="border-color:rgba(200,241,105,.25);background:rgba(200,241,105,.04)">
+          <span class="w-11 h-11 rounded-xl grid place-items-center bg-acc text-ink shrink-0"><i data-lucide="shield-check" class="w-5 h-5"></i></span>
+          <div>
+            <p class="font-semibold">Privacy by Design (LGPD): todos os cálculos são processados localmente no seu navegador.</p>
+            <p class="text-sm text-muted mt-1.5 leading-relaxed">Nenhum dado preenchido é enviado, armazenado em bancos de dados externos ou compartilhado com terceiros. Ao fechar a aba, as respostas são descartadas.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-3">
+        <p class="label">Especialistas autores</p>
+        <ul class="space-y-1.5 text-[15px]" id="f-authors"></ul>
+        <p class="text-sm text-muted mt-4 leading-relaxed">Unidade Curricular: Exploração Digital e Fundamentos Tecnológicos · Objetos de Conhecimento 05 e 06</p>
+      </div>
+      <div class="lg:col-span-3">
+        <p class="label">Construído com</p>
+        <p class="text-[15px] leading-relaxed">HTML5 · TailwindCSS · Chart.js · Lucide · JavaScript Vanilla</p>
+        <p class="text-sm text-muted mt-4">Publicado em nuvem estática via GitHub Pages.</p>
+      </div>
+    </div>
+    <div class="mt-16 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted font-mono">
+      <span>© <span id="year"></span> Nelore — Consultoria em Transformação Digital</span>
+      <span>Nelore: rústico, adaptável e feito para escalar.</span>
+    </div>
+  </div>
+  <div class="font-serif text-[clamp(7rem,26vw,22rem)] leading-[.75] tracking-tighter text-center select-none -mb-[.12em]" style="color:transparent;-webkit-text-stroke:1px rgba(237,232,221,.09)" aria-hidden="true">Nelore</div>
+</footer>
+
+<!-- barra móvel -->
+<div id="mbar" class="lg:hidden fixed bottom-3 left-3 right-3 z-40 card bg-panel/95 backdrop-blur px-4 py-3 flex items-center gap-4 transition-all duration-300 translate-y-24 opacity-0 pointer-events-none" style="border-radius:18px">
+  <div class="flex-1 min-w-0">
+    <div class="flex justify-between text-xs"><span class="text-muted">Perguntas-chave</span><span class="font-mono"><span id="mb-count">0</span>/8</span></div>
+    <div class="bar mt-2"><span id="mb-bar" style="background:var(--acc)"></span></div>
+  </div>
+  <a href="#painel" class="btn btn-acc btn-sm js-generate">Resultado</a>
+</div>
+
+<!-- toast -->
+<div id="toast" role="status" aria-live="polite" class="fixed z-[60] top-20 left-1/2 -translate-x-1/2 -translate-y-3 opacity-0 pointer-events-none card bg-panel px-4 py-3 text-sm flex items-center gap-3 shadow-2xl w-max max-w-[92vw]"></div>
+
+<!-- Chart.js e Lucide via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+<script>
+/* =====================================================================
+   NELORE — Diagnóstico 360º de Maturidade Digital
+   Toda a lógica roda no navegador (client-side). Nada é enviado.
+   ===================================================================== */
+
+/* ✏️ Edite aqui os nomes dos especialistas autores */
+const AUTORES = ['Nome do(a) Especialista 1', 'Nome do(a) Especialista 2'];
+
+/* ---------------- Modelo de dados ---------------- */
+const PILLARS = [
+  { id:'infra', n:'01', name:'Infraestrutura & Nuvem', short:'Nuvem', icon:'cloud', color:'#7CC6FE', print:'#2F7FB8',
+    desc:'Onde vivem seus sistemas e dados, e o quanto eles resistem a falhas.',
+    pain:['PC do escritório servindo de “servidor”','Backup manual em HD externo','Quedas frequentes de conexão'],
+    good:['Migração SaaS / PaaS / IaaS','Backup 3-2-1 automatizado','Redundância de link e FinOps'] },
+  { id:'sys', n:'02', name:'Sistemas ERP/CRM & Dados', short:'ERP/CRM', icon:'workflow', color:'#C8F169', print:'#5B7A12',
+    desc:'Se vendas, estoque e financeiro falam a mesma língua.',
+    pain:['Planilhas soltas no WhatsApp/e-mail','Vendas que não conversam com o financeiro','Indicadores pouco confiáveis'],
+    good:['Integração CRM ↔ ERP','Fonte única de verdade','Dashboards gerenciais'] },
+  { id:'ai', n:'03', name:'IA Generativa & Automação', short:'IA & Automação', icon:'sparkles', color:'#B79CFF', print:'#6A4FCF',
+    desc:'Quanto trabalho repetitivo a tecnologia já tirou das mãos da equipe.',
+    pain:['Horas copiando e colando dados','Dúvidas repetitivas respondidas à mão','IA usada sem método'],
+    good:['Mapeamento de gargalos','Fluxos No-Code','IA com Human-in-the-Loop'] },
+  { id:'gov', n:'04', name:'Governança, Ética & LGPD', short:'Segurança & LGPD', icon:'shield-check', color:'#F2A65A', print:'#B8621A',
+    desc:'Quem acessa o quê, e como os dados de clientes são protegidos.',
+    pain:['Senhas compartilhadas em post-it','Contas sem autenticação MFA','Dados de clientes em IAs públicas'],
+    good:['MFA e menor privilégio','Política de uso ético de IA','Anonimização e adequação à LGPD'] },
+];
+const PMAP = Object.fromEntries(PILLARS.map(p => [p.id, p]));
+
+const QUESTIONS = [
+  { id:'infra_host', pillar:'infra', type:'choice', short:'Hospedagem dos sistemas',
+    title:'Onde rodam hoje os sistemas e arquivos críticos da empresa?', help:'Pense em ERP, arquivos compartilhados, e-mail e banco de dados.',
+    options:[['Num computador do escritório','Uma máquina de uso comum faz papel de “servidor”.'],
+             ['Em servidor local dedicado','Equipamento próprio, sem redundância ou réplica.'],
+             ['Ambiente híbrido','Parte em nuvem (SaaS/IaaS), parte ainda local.'],
+             ['Majoritariamente em nuvem','SaaS/PaaS/IaaS com SLA e responsabilidades claras.']] },
+  { id:'infra_backup', pillar:'infra', type:'choice', short:'Backup',
+    title:'Como é feito o backup dos dados?', help:'Backup só vale se puder ser restaurado.',
+    options:[['Não há rotina definida','No máximo uma cópia eventual em HD externo.'],
+             ['Manual e periódico','Alguém lembra de copiar; existe uma única cópia.'],
+             ['Automatizado','Roda sozinho, mas sem cópia externa ou teste de restauração.'],
+             ['Regra 3-2-1 automatizada','3 cópias, 2 mídias, 1 fora da empresa. Restauração testada.']] },
+  { id:'infra_cont', pillar:'infra', type:'checks', short:'Continuidade operacional',
+    title:'Quais práticas de continuidade já existem?', help:'Marque todas as que se aplicam.',
+    items:[['link','Link de internet redundante (2ª operadora)'],['power','Nobreak / proteção de energia'],
+           ['monitor','Monitoramento e alertas de disponibilidade'],['finops','Controle de custos de nuvem (FinOps)'],
+           ['inventory','Inventário de ativos e sistemas atualizado']] },
+
+  { id:'sys_flow', pillar:'sys', type:'choice', short:'Fluxo de dados',
+    title:'Como as áreas registram vendas, estoque e financeiro?', help:'O caminho do pedido até o caixa.',
+    options:[['Planilhas soltas','Arquivos trocados por WhatsApp e e-mail.'],
+             ['Sistemas isolados por área','Cada área tem o seu; dados são redigitados.'],
+             ['ERP implantado','Mas CRM e vendas ainda ficam fora dele.'],
+             ['ERP e CRM integrados','Via API: uma única fonte de verdade.']] },
+  { id:'sys_kpi', pillar:'sys', type:'choice', short:'Indicadores de gestão',
+    title:'Como a gestão acompanha os indicadores do negócio?', help:'Faturamento, margem, estoque, inadimplência…',
+    options:[['Sem indicadores definidos','Decisões tomadas no feeling.'],
+             ['Relatórios manuais','Montados à mão no fim do mês.'],
+             ['Relatórios dos sistemas','Mas sem visão consolidada entre áreas.'],
+             ['Dashboards automatizados','KPIs definidos, atualizados em (quase) tempo real.']] },
+  { id:'sys_rework', pillar:'sys', type:'slider', short:'Retrabalho com dados',
+    title:'Quanto do tempo da equipe vai para redigitar e conciliar dados?', help:'Copiar de uma planilha para outra, conferir relatórios, conciliar extratos.',
+    min:0, max:50, step:5, def:20, unit:'%',
+    describe:v => v<=5?['Mínimo','Os dados fluem sozinhos.']:v<=15?['Moderado','Há retrabalho pontual.']:v<=30?['Alto','Retrabalho relevante e caro.']:['Crítico','A equipe trabalha para a planilha.'] },
+
+  { id:'ai_use', pillar:'ai', type:'choice', short:'Uso de IA generativa',
+    title:'Como a empresa usa IA generativa hoje?', help:'ChatGPT, Gemini, Claude, Copilot e similares.',
+    options:[['Não usa','Ou é proibida sem que o tema tenha sido discutido.'],
+             ['Uso individual, sem método','Cada um usa a ferramenta que quer, como quer.'],
+             ['Uso orientado em algumas áreas','Ferramentas definidas e prompts padronizados.'],
+             ['Integrada aos processos','Assistentes nos fluxos, com revisão humana (Human-in-the-Loop).']] },
+  { id:'ai_auto', pillar:'ai', type:'choice', short:'Automação de tarefas',
+    title:'Tarefas repetitivas (lançamentos, cobranças, triagem de e-mails) são…', help:'Considere as tarefas que se repetem toda semana.',
+    options:[['Todas manuais','Ninguém mediu o tempo gasto nelas.'],
+             ['Mapeadas, mas manuais','Sabemos onde dói, mas ainda não automatizamos.'],
+             ['Parcialmente automatizadas','Alguns fluxos No-Code (Make, Zapier, Power Automate).'],
+             ['Automatizadas e monitoradas','Com dono de processo e alerta de falhas.']] },
+  { id:'ai_hours', pillar:'ai', type:'slider', short:'Tempo em tarefas repetitivas',
+    title:'Horas por semana que cada colaborador gasta em tarefas repetitivas', help:'Média estimada por pessoa. Base do cálculo de potencial de automação.',
+    min:0, max:20, step:1, def:6, unit:' h',
+    describe:v => v<=2?['Baixo','Pouco espaço para automação.']:v<=6?['Moderado','Ganhos rápidos possíveis.']:v<=12?['Alto','Grande potencial de automação.']:['Muito alto','Talento preso em tarefa manual.'] },
+
+  { id:'gov_access', pillar:'gov', type:'choice', short:'Senhas, MFA e acessos',
+    title:'Como são gerenciadas senhas e acessos?', help:'E-mail, banco, ERP, nuvem e redes sociais da empresa.',
+    options:[['Senhas compartilhadas','Anotadas em post-it ou na planilha da equipe.'],
+             ['Senhas individuais, sem MFA','Cada um tem a sua, protegida só pela senha.'],
+             ['MFA nas contas principais','E-mail e banco protegidos com segundo fator.'],
+             ['MFA em tudo + menor privilégio','Gerenciador de senhas e acessos revisados.']] },
+  { id:'gov_ai', pillar:'gov', type:'choice', short:'Dados de clientes e IA',
+    title:'Como são tratados dados de clientes no uso de IA e ferramentas externas?', help:'Nomes, CPFs, contratos, prontuários, dados financeiros.',
+    options:[['Sem critério','Dados de clientes são colados em IAs públicas.'],
+             ['Bom senso, sem regra','Ninguém escreveu o que pode e o que não pode.'],
+             ['Política definida','Existe política de uso de IA, mas sem treinamento.'],
+             ['Política + treinamento + anonimização','E apenas ferramentas com contrato corporativo.']] },
+  { id:'gov_lgpd', pillar:'gov', type:'checks', short:'Controles de LGPD',
+    title:'Quais controles de LGPD já estão implantados?', help:'Marque todos os que se aplicam.',
+    items:[['dpo','Encarregado (DPO) ou canal do titular definido'],['ropa','Inventário de dados pessoais (ROPA)'],
+           ['policy','Política de privacidade publicada'],['incident','Plano de resposta a incidentes'],
+           ['training','Treinamento periódico de segurança']] },
+];
+const QMAP = Object.fromEntries(QUESTIONS.map(q => [q.id, q]));
+const CHOICES = QUESTIONS.filter(q => q.type === 'choice');
+
+const SECTORS = ['Varejo','Indústria','Serviços','Saúde','Agronegócio','Logística','Educação','Tecnologia','Financeiro','Outro'];
+
+const STAGES = [
+  { name:'Iniciante', range:'0–39', max:39, color:'#FF6B5A', paper:'#FF6B5A',
+    desc:'Operação dependente de processos manuais, infraestrutura local frágil e alto risco de perda de dados ou de incidentes de segurança.' },
+  { name:'Em Transição', range:'40–59', max:59, color:'#F2B544', paper:'#F2B544',
+    desc:'Há iniciativas digitais em curso, mas ainda isoladas: os sistemas não conversam entre si e a governança é informal.' },
+  { name:'Conectada', range:'60–79', max:79, color:'#7CC6FE', paper:'#7CC6FE',
+    desc:'Sistemas integrados e nuvem adotada. O próximo salto está em automação inteligente e governança contínua.' },
+  { name:'Líder Digital', range:'80–100', max:100, color:'#C8F169', paper:'#C8F169',
+    desc:'Dados integrados, nuvem bem gerida, IA aplicada com responsabilidade e segurança como parte da cultura.' },
+];
+const stageOf = s => STAGES.find(st => s <= st.max) || STAGES[3];
+const tierOf = s => s < 40 ? { name:'Crítico', color:'#FF6B5A' } : s < 70 ? { name:'Em evolução', color:'#F2B544' } : { name:'Sólido', color:'#C8F169' };
+
+const PRIO = { 1:{ name:'Crítica', c:'#FF6B5A' }, 2:{ name:'Alta', c:'#F2B544' }, 3:{ name:'Média', c:'#7CC6FE' }, 4:{ name:'Evolução', c:'#C8F169' } };
+const HORIZ = ['0–30 dias','30–90 dias','90–180 dias'];
+
+/* Casos de exemplo (empresas fictícias) */
+const DEMOS = [
+  { company:{ name:'Laticínios Serra Azul Ltda.', sector:'Indústria', emp:'85' },
+    ans:{ infra_host:1, infra_backup:2, infra_cont:['power'], sys_flow:2, sys_kpi:1, sys_rework:30, ai_use:1, ai_auto:1, ai_hours:8, gov_access:2, gov_ai:1, gov_lgpd:['policy'] } },
+  { company:{ name:'Clínica Vida Plena', sector:'Saúde', emp:'32' },
+    ans:{ infra_host:0, infra_backup:0, infra_cont:['power'], sys_flow:0, sys_kpi:0, sys_rework:40, ai_use:1, ai_auto:0, ai_hours:12, gov_access:0, gov_ai:0, gov_lgpd:['policy'] } },
+  { company:{ name:'Rota Sul Logística S.A.', sector:'Logística', emp:'210' },
+    ans:{ infra_host:2, infra_backup:3, infra_cont:['link','power','monitor','finops'], sys_flow:3, sys_kpi:2, sys_rework:10, ai_use:2, ai_auto:2, ai_hours:4, gov_access:3, gov_ai:2, gov_lgpd:['dpo','ropa','policy','incident'] } },
+];
+let demoIdx = 0;
+
+/* ---------------- Estado (somente em memória) ---------------- */
+const state = { company:{ name:'', sector:'', emp:'' }, ans:{} };
+function resetState(){
+  state.company = { name:'', sector:'', emp:'' };
+  state.ans = {};
+  QUESTIONS.forEach(q => {
+    if (q.type === 'choice') state.ans[q.id] = null;
+    if (q.type === 'checks') state.ans[q.id] = [];
+    if (q.type === 'slider') state.ans[q.id] = q.def;
+  });
+}
+
+/* ---------------- Utilidades ---------------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const fmt = n => Math.round(n).toLocaleString('pt-BR');
+const fmt1 = n => n.toLocaleString('pt-BR', { minimumFractionDigits:1, maximumFractionDigits:1 });
+const icons = () => { if (window.lucide) window.lucide.createIcons(); };
+const hexA = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function countTo(el, to, opts = {}){
+  const from = parseFloat(el.dataset.v || '0');
+  el.dataset.v = to;
+  const f = opts.format || (v => fmt(v));
+  if (reduceMotion || from === to){ el.textContent = f(to); return; }
+  const dur = opts.dur || 1100, t0 = performance.now();
+  const token = (el._tok = (el._tok || 0) + 1);
+  const step = t => {
+    if (el._tok !== token) return;
+    const k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = f(from + (to - from) * e);
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  // garante o valor final mesmo se a aba estiver em segundo plano
+  setTimeout(() => { if (el._tok === token) el.textContent = f(to); }, dur + 150);
+}
+
+let toastTimer;
+function toast(msg, kind = 'ok'){
+  const t = $('#toast');
+  const color = kind === 'warn' ? '#F2B544' : '#C8F169';
+  t.innerHTML = `<span class="w-2 h-2 rounded-full shrink-0" style="background:${color}"></span><span>${msg}</span>`;
+  t.style.opacity = '1'; t.style.transform = 'translate(-50%,0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%,-12px)'; }, 3600);
+}
+
+function sizeOf(emp, sector){
+  if (!emp) return null;
+  const ind = sector === 'Indústria';
+  const [a, b, c] = ind ? [19, 99, 499] : [9, 49, 99];
+  if (emp <= a) return { id:'micro', label:'Microempresa' };
+  if (emp <= b) return { id:'pequena', label:'Pequena empresa' };
+  if (emp <= c) return { id:'media', label:'Média empresa' };
+  return { id:'grande', label:'Grande empresa' };
+}
+
+/* ---------------- Motor de cálculo ---------------- */
+function qScore(q){
+  const v = state.ans[q.id];
+  if (q.type === 'choice') return v == null ? null : (v / 3) * 100;
+  if (q.type === 'checks') return (v.length / q.items.length) * 100;
+  return (1 - (v - q.min) / (q.max - q.min)) * 100;
+}
+
+function compute(){
+  const pillars = {};
+  const answered = CHOICES.filter(q => state.ans[q.id] != null).length;
+  PILLARS.forEach(p => {
+    const qs = QUESTIONS.filter(q => q.pillar === p.id);
+    const ready = qs.every(q => q.type !== 'choice' || state.ans[q.id] != null);
+    pillars[p.id] = ready ? Math.round(qs.reduce((a, q) => a + qScore(q), 0) / qs.length) : null;
+  });
+  const complete = answered === CHOICES.length;
+  const vals = Object.values(pillars).filter(v => v != null);
+  const partial = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
+  const overall = complete ? Math.round(PILLARS.reduce((a, p) => a + pillars[p.id], 0) / PILLARS.length) : null;
+  return { pillars, overall, partial, answered, total: CHOICES.length, complete };
+}
+
+function context(r){
+  const emp = parseInt(state.company.emp, 10) || 0;
+  const sector = state.company.sector || '';
+  const size = sizeOf(emp, sector);
+  const autoMonth = Math.round(state.ans.ai_hours * 4.33 * emp * 0.5);
+  const rework = Math.round((state.ans.sys_rework / 100) * 220 * emp);
+  return {
+    name: state.company.name.trim() || 'Sua empresa', named: !!state.company.name.trim(),
+    sector, emp, size, scores: r.pillars, overall: r.overall,
+    auto: autoMonth, fte: autoMonth / 220, rework
+  };
+}
+
+/* Aderência aos modelos de nuvem (SaaS / PaaS / IaaS) */
+function cloudFit(c){
+  const A = state.ans, s = c.size ? c.size.id : 'pequena';
+  const small = s === 'micro' || s === 'pequena';
+  const clamp = v => Math.max(5, Math.min(98, v));
+  const fit = {
+    saas: clamp(55 + (small ? 25 : 5) + (A.sys_flow <= 1 ? 10 : 0) + (A.infra_host === 0 ? 8 : 0) - (c.sector === 'Tecnologia' ? 20 : 0)),
+    paas: clamp(25 + (c.sector === 'Tecnologia' ? 42 : 0) + (small ? 0 : 15) + (A.sys_flow >= 2 ? 10 : 0) + (A.ai_use >= 2 ? 8 : 0)),
+    iaas: clamp(15 + (A.infra_host === 1 ? 30 : 0) + (s === 'grande' ? 22 : s === 'media' ? 12 : 0) + (['Indústria','Saúde','Financeiro','Logística'].includes(c.sector) ? 10 : 0)),
+  };
+  const best = Object.keys(fit).sort((a, b) => fit[b] - fit[a])[0];
+  return { fit, best };
+}
+const CLOUD = {
+  saas: { name:'SaaS', full:'Software como Serviço', ex:'Google Workspace · Microsoft 365 · ERP em nuvem',
+    text:'Adote software pronto, entregue como serviço: Google Workspace ou Microsoft 365 para colaboração e um ERP em nuvem (ex.: Omie, Bling, Conta Azul ou TOTVS) para a gestão. Não há servidor para manter, porque o fornecedor cuida de atualização, disponibilidade e infraestrutura. A responsabilidade pelos dados, pelos acessos e pelo backup das informações de negócio continua da empresa (modelo de responsabilidade compartilhada).' },
+  paas: { name:'PaaS', full:'Plataforma como Serviço', ex:'Azure App Service · AWS RDS · Google Cloud Run',
+    text:'Hospede aplicações próprias e bancos de dados em serviços gerenciados (Azure App Service, AWS Elastic Beanstalk + RDS, Google Cloud Run + Cloud SQL). A equipe foca em código e dados. Patches, escalabilidade e alta disponibilidade ficam com a plataforma, e a fatura acompanha o uso real.' },
+  iaas: { name:'IaaS', full:'Infraestrutura como Serviço', ex:'AWS EC2 · Azure VMs · Google Compute Engine',
+    text:'Para sistemas legados que não podem ser reescritos agora, faça lift-and-shift para máquinas virtuais (AWS EC2, Azure Virtual Machines, Google Compute Engine) como etapa intermediária, com snapshots automáticos e rede privada. Depois, planeje a modernização para PaaS/SaaS para reduzir custo de operação.' },
+};
+
+/* ---------------- Motor de recomendações (regras do especialista) ---------------- */
+const SECTOR_RECS = {
+  'Varejo':      ['Omnicanalidade no varejo','Integre PDV, e-commerce, marketplaces e estoque em tempo real no ERP para evitar ruptura, venda sem estoque e divergência de preço entre canais.',['Omnichannel']],
+  'Indústria':   ['Do chão de fábrica ao ERP','Conecte o apontamento de produção (MES) e o planejamento de materiais (MRP) ao ERP para custear corretamente cada ordem de produção e reduzir estoques de segurança.',['MES','MRP']],
+  'Serviços':    ['Contratos e ordens de serviço integrados','Centralize contratos recorrentes, ordens de serviço e faturamento em um único fluxo (PSA + ERP), com cobrança e reajuste automáticos.',['PSA','Recorrência']],
+  'Saúde':       ['Prontuário e faturamento integrados','Integre prontuário eletrônico (PEP), agenda e faturamento de convênios no padrão TISS, reduzindo glosas e redigitação.',['PEP','TISS']],
+  'Agronegócio': ['Dados do campo ao escritório','Use aplicativos offline-first para coleta no campo (manejo, pesagem, insumos) sincronizados com a gestão rural/ERP, viabilizando rastreabilidade e custo por lote.',['Rastreabilidade','Offline-first']],
+  'Logística':   ['TMS e WMS integrados ao ERP','Conecte a gestão de transporte (TMS) e de armazém (WMS) ao ERP para rastrear entregas, custo de frete e ocupação em tempo real.',['TMS','WMS']],
+  'Educação':    ['Jornada do aluno conectada','Integre o CRM de captação, o sistema acadêmico e o financeiro para acompanhar o aluno do primeiro contato à rematrícula e agir cedo sobre evasão.',['CRM','Evasão']],
+  'Tecnologia':  ['Billing, CRM e suporte conectados','Integre CRM, plataforma de assinaturas (billing) e suporte para medir MRR, churn e custo de aquisição sem planilhas paralelas.',['MRR','Churn']],
+  'Financeiro':  ['Trilha de auditoria ponta a ponta','Garanta rastreabilidade entre CRM, core financeiro e contabilidade, com logs imutáveis que atendam às exigências regulatórias do setor.',['Auditoria']],
+  'Outro':       ['Mapeie o fluxo do pedido ao caixa','Desenhe o fluxo order-to-cash e marque cada ponto onde o mesmo dado é digitado mais de uma vez. Esses são os primeiros alvos de integração.',['Order-to-cash']],
+};
+
+function buildRecs(c){
+  const A = state.ans, R = [];
+  const add = (pillar, pr, h, title, body, tags = []) => R.push({ pillar, pr, h, title, body, tags });
+  const has = (q, id) => (A[q] || []).includes(id);
+  const small = !c.size || c.size.id === 'micro' || c.size.id === 'pequena';
+  const cf = cloudFit(c), cm = CLOUD[cf.best];
+
+  /* --- Pilar 1: Infraestrutura & Nuvem --- */
+  if (A.infra_host === 0) add('infra',1,0,'Tire o “servidor” de baixo da mesa','Um computador de uso comum atuando como servidor é ponto único de falha: um defeito, um ransomware ou uma queda de energia param a empresa. Migre arquivos e e-mail para SaaS (Google Workspace ou Microsoft 365, com versionamento e retenção) e desative o compartilhamento local em até 30 dias.',['SaaS','Ponto único de falha']);
+  if (A.infra_host === 1) add('infra',2,1,'Planeje a saída do servidor local','O servidor dedicado sem redundância concentra risco e custos ocultos (energia, peças, manutenção, licenças). Classifique cada sistema hospedado: o que tem equivalente SaaS migra direto; o que é legado vai para IaaS (lift-and-shift) e depois é modernizado para PaaS.',['IaaS','Lift-and-shift']);
+  if (A.infra_host === 2) add('infra',3,1,'Consolide o ambiente híbrido','Defina qual ambiente é a “casa oficial” de cada dado, conecte o legado à nuvem com VPN site-to-site e estabeleça metas de RTO/RPO por sistema para orientar as próximas ondas de migração.',['Híbrido','RTO/RPO']);
+  add('infra', A.infra_host <= 1 ? 2 : 3, 1, `Modelo de nuvem indicado: ${cm.name} (${cm.full})`, cm.text, [cm.name, 'Responsabilidade compartilhada']);
+  if (A.infra_backup <= 1) add('infra',1,0,'Implemente a Regra de Backup 3-2-1','Mantenha 3 cópias dos dados, em 2 mídias diferentes, com 1 fora da empresa (nuvem). Automatize o backup diário com retenção de versões e cópia imutável (ex.: AWS S3 Object Lock, Backblaze B2 ou Azure Blob imutável), que resiste a ransomware. HD externo esquecido na gaveta não conta como estratégia.',['Backup 3-2-1','Ransomware']);
+  else if (A.infra_backup === 2) add('infra',2,1,'Teste a restauração: backup não testado é só hipótese','Agende um teste mensal de restauração com evidência registrada (tempo gasto e integridade dos arquivos) e garanta ao menos uma cópia fora da empresa e imutável.',['Teste de restore','Imutabilidade']);
+  if (!has('infra_cont','link')) add('infra',2,1,'Redundância de link de internet','Com sistemas na nuvem, a internet passa a ser infraestrutura crítica. Contrate uma segunda operadora com tecnologia diferente (fibra + 4G/5G ou rádio) e um roteador dual-WAN com failover automático.',['Alta disponibilidade']);
+  if (!has('infra_cont','power') && A.infra_host <= 1) add('infra',2,0,'Proteja a energia dos equipamentos críticos','Nobreak dimensionado para servidor, roteador e switch, com desligamento seguro automático. Evita corrompimento de dados enquanto a migração não acontece.',['Continuidade']);
+  if (!has('infra_cont','monitor')) add('infra',3,1,'Monitoramento e alertas de disponibilidade','Monitore sites, links e serviços críticos com alertas por e-mail ou mensagem (ex.: UptimeRobot, Zabbix, Grafana Cloud). A empresa deve descobrir a falha antes do cliente.',['Observabilidade']);
+  if (!has('infra_cont','finops')) {
+    if (A.infra_host >= 2) add('infra',3,1,'FinOps: controle os custos da nuvem','Ative orçamentos e alertas de gasto, use tags por centro de custo, revise mensalmente recursos ociosos (rightsizing) e avalie instâncias reservadas para cargas estáveis.',['FinOps']);
+    else add('infra',3,2,'Já comece a migração com FinOps','Ao contratar nuvem, configure orçamento mensal, alertas de 50/80/100% e tags por área. Assim, a economia prometida pela nuvem não vira surpresa na fatura.',['FinOps']);
+  }
+  if (!has('infra_cont','inventory')) add('infra',3,0,'Inventário de ativos e sistemas','Liste equipamentos, softwares, licenças, contas de nuvem e responsáveis. É a base da migração, da segurança e da adequação à LGPD.',['Inventário']);
+  if (c.scores.infra >= 80) add('infra',4,2,'Evolua para resiliência multi-região','Com a base sólida, formalize um plano de recuperação de desastres (DR) com RTO/RPO por sistema, réplicas em outra zona/região e simulações semestrais.',['DR','Multi-zona']);
+
+  /* --- Pilar 2: Sistemas ERP/CRM & Dados --- */
+  if (A.sys_flow === 0) add('sys',1,0,'Elimine as planilhas soltas: eleja a fonte única de verdade','Planilhas trocadas por WhatsApp e e-mail geram versões conflitantes e decisões no escuro. Adote um ERP em nuvem compatível com o porte e comece pelos cadastros mestres (clientes, produtos, fornecedores), eliminando duplicidades antes de importar.',['Single Source of Truth','ERP']);
+  if (A.sys_flow === 1) add('sys',2,1,'Integre os sistemas isolados ao ERP','Cada redigitação é uma chance de erro. Defina o ERP como núcleo e conecte os demais sistemas via API ou plataforma de integração (iPaaS como Make, n8n ou Zapier), eliminando a dupla digitação entre áreas.',['Integração','API']);
+  if (A.sys_flow === 2) add('sys',2,1,'Conecte CRM ↔ ERP','A venda fechada no CRM deve virar pedido, faturamento e baixa de estoque no ERP automaticamente, e o financeiro deve devolver ao CRM o status de pagamento. Use integração nativa ou API, com registro de falhas.',['CRM','ERP','API']);
+  if (A.sys_flow <= 1) add('sys',3,1,'Implante um CRM para o funil comercial','Registre leads, oportunidades e histórico de contato em um CRM (ex.: HubSpot, Pipedrive, RD Station CRM) no lugar de cadernos e conversas soltas, e já planeje a integração com o ERP.',['CRM']);
+  if (A.sys_kpi <= 1) add('sys',2,1,'Defina de 5 a 7 KPIs e um dashboard gerencial','Escolha poucos indicadores que movem o negócio (faturamento, margem, ticket médio, inadimplência, giro de estoque) e publique um dashboard (Looker Studio ou Power BI) alimentado direto do ERP, nunca de planilha manual.',['Dashboards','KPIs']);
+  else if (A.sys_kpi === 2) add('sys',3,2,'Consolide a visão gerencial','Una os relatórios dos sistemas em um único painel com metas, responsáveis e atualização automática, e estabeleça uma reunião mensal de análise de resultados.',['BI']);
+  if (A.sys_rework >= 20) add('sys',2,0,`Corte o retrabalho de ${A.sys_rework}% do tempo da equipe`,`Hoje são ${c.emp ? '≈ ' + fmt(c.rework) + ' horas/mês' : 'muitas horas'} em redigitação e conciliação. Ataque primeiro as conciliações: importação automática de extrato bancário (OFX/Open Finance), emissão de NF-e a partir do pedido e integração de e-commerce e marketplace com o estoque.`,['Retrabalho','Conciliação']);
+  if (c.sector && SECTOR_RECS[c.sector]) { const s = SECTOR_RECS[c.sector]; add('sys',3,2,`${s[0]} (${c.sector})`, s[1], s[2]); }
+  if (c.scores.sys >= 80) add('sys',4,2,'Governança de dados mestres e data warehouse','Nomeie um responsável por cada cadastro mestre, crie regras de qualidade e centralize o histórico em um data warehouse (BigQuery, Snowflake ou Azure Synapse) para análises avançadas e IA.',['MDM','Data Warehouse']);
+
+  /* --- Pilar 3: IA Generativa & Automação --- */
+  if (A.ai_use === 0) add('ai',2,1,'Comece com um piloto controlado de IA generativa','Escolha 1 ou 2 casos de baixo risco (resumo de reuniões, rascunho de e-mails, FAQ interno), use planos corporativos que não treinam modelos com seus dados e meça o tempo economizado antes de expandir.',['Piloto','IA corporativa']);
+  if (A.ai_use === 1) add('ai',2,0,'Tire a IA da informalidade','O uso individual e sem método gera resultados inconsistentes e risco de vazamento. Padronize ferramentas corporativas, crie uma biblioteca de prompts aprovados por área e defina o que pode e o que não pode ser inserido.',['Biblioteca de prompts','Governança']);
+  if (A.ai_use === 2) add('ai',3,1,'Integre IA aos fluxos com Human-in-the-Loop','Leve a IA para dentro dos processos (triagem de chamados, rascunho de propostas, relatórios), sempre com revisão humana antes de qualquer saída ao cliente ou decisão relevante.',['Human-in-the-Loop']);
+  if (A.ai_auto <= 1) add('ai',2,1,'Mapeie gargalos e automatize o “top 3” com No-Code','Liste as tarefas repetitivas por frequência × tempo × risco de erro. Automatize as 3 primeiras com Make, Zapier, Power Automate ou n8n (ex.: lançar pedidos do formulário no ERP, cobrança automática, triagem de e-mails).',['No-Code','Automação']);
+  else if (A.ai_auto === 2) add('ai',3,2,'Dê dono e monitoramento às automações','Cada automação precisa de um responsável, documentação e alerta de falha. Uma automação que quebra sem ninguém perceber é pior que o processo manual.',['Operação']);
+  if (A.ai_hours >= 6) add('ai',2,1, c.emp ? `Libere ≈ ${fmt(c.auto)} horas/mês de trabalho repetitivo` : 'Libere horas de trabalho repetitivo', `Com ${A.ai_hours} h/semana por colaborador em tarefas repetitivas, estima-se que cerca de metade possa ser automatizada ou acelerada com IA e No-Code${c.emp ? ` (≈ ${fmt1(c.fte)} colaboradores em tempo integral)` : ''}. Esse tempo volta para atendimento, vendas e análise.`,['Produtividade']);
+  add('ai', A.ai_use <= 1 ? 3 : 4, 2, 'Assistente de atendimento com triagem e revisão humana','Use IA para classificar e rascunhar respostas a dúvidas repetitivas de clientes e colaboradores, com base de conhecimento aprovada e um humano validando antes do envio, pelo menos até a qualidade estar comprovada.',['Triagem','Human-in-the-Loop']);
+  if (c.scores.ai >= 80) add('ai',4,2,'Assistentes com base de conhecimento própria (RAG)','Conecte assistentes de IA à base interna de documentos e procedimentos (RAG), com controle de acesso, métricas de qualidade e auditoria de respostas.',['RAG','Agentes']);
+
+  /* --- Pilar 4: Governança, Ética & LGPD --- */
+  if (A.gov_access === 0) add('gov',1,0,'Fim das senhas compartilhadas','Com senha em post-it ou compartilhada, não dá para saber quem fez o quê nem revogar o acesso quando alguém sai da empresa. Crie contas individuais e adote um gerenciador de senhas corporativo (ex.: Bitwarden, 1Password, Keeper).',['Senhas','Rastreabilidade']);
+  if (A.gov_access <= 1) add('gov',1,0,'Ative MFA em todas as contas','Comece por e-mail, banco, ERP e console de nuvem. Prefira aplicativo autenticador ou chaves de acesso (passkeys/FIDO2) a SMS. O MFA bloqueia a grande maioria dos ataques de roubo de credenciais.',['MFA']);
+  if (A.gov_access === 2) add('gov',2,1,'Menor privilégio e revisão de acessos','Cada pessoa acessa apenas o necessário para sua função. Centralize o login com SSO e revise os acessos a cada trimestre e em todo desligamento.',['Menor privilégio','SSO']);
+  if (A.gov_ai === 0) add('gov',1,0,'Pare de inserir dados de clientes em IAs públicas','Colar dados pessoais em ferramentas públicas pode configurar tratamento e compartilhamento indevidos sob a LGPD. Interrompa a prática imediatamente, oriente a anonimização ou pseudonimização e libere apenas ferramentas com contrato corporativo.',['LGPD','IA ética']);
+  if (A.gov_ai === 1) add('gov',2,0,'Publique uma política de uso ético de IA','Documente em uma página: ferramentas autorizadas, dados proibidos, revisão humana obrigatória e a quem recorrer em caso de dúvida. Bom senso não é auditável.',['Política de IA']);
+  if (A.gov_ai === 2) add('gov',3,1,'Treine a equipe e anonimize por padrão','Faça treinamentos práticos com exemplos reais do dia a dia e use dados anonimizados ou sintéticos sempre que a IA não precisar identificar o titular.',['Treinamento','Anonimização']);
+  if (!has('gov_lgpd','dpo')) {
+    if (small) add('gov',2,1,'Defina o canal do titular e um responsável pela privacidade','Agentes de tratamento de pequeno porte podem ser dispensados de indicar Encarregado (Resolução CD/ANPD nº 2/2022), mas devem manter um canal de comunicação com os titulares. Defina um responsável interno e publique esse canal.',['LGPD','Canal do titular']);
+    else add('gov',2,1,'Nomeie o Encarregado (DPO)','A LGPD (art. 41) exige a indicação do Encarregado pelo tratamento de dados pessoais, com identidade e contato divulgados publicamente, de preferência no site da empresa.',['LGPD','DPO']);
+  }
+  if (!has('gov_lgpd','ropa')) add('gov',2,1,'Mapeie os dados pessoais (inventário/ROPA)','Registre quais dados pessoais a empresa coleta, para qual finalidade, com qual base legal, onde ficam e com quem são compartilhados (art. 37 da LGPD). Sem esse mapa, não há como protegê-los nem responder a um titular.',['ROPA']);
+  if (!has('gov_lgpd','incident')) add('gov',2,1,'Plano de resposta a incidentes','Defina quem faz o quê em caso de vazamento ou ransomware. Incidentes que possam causar risco ou dano relevante aos titulares devem ser comunicados à ANPD em até 3 dias úteis (Resolução CD/ANPD nº 15/2024).',['Incidentes','ANPD']);
+  if (!has('gov_lgpd','policy')) add('gov',3,0,'Publique uma política de privacidade clara','Site, formulários e contratos devem informar quais dados são coletados, para quê, por quanto tempo e como o titular exerce seus direitos.',['Transparência']);
+  if (!has('gov_lgpd','training')) add('gov',3,1,'Conscientização contínua em segurança','Faça treinamentos curtos e recorrentes, com simulações de phishing. A maior parte dos incidentes começa com um clique.',['Phishing','Cultura']);
+  if (c.sector === 'Saúde') add('gov',1,0,'Dados de saúde exigem proteção reforçada','Dados de saúde são sensíveis (art. 11 da LGPD): criptografia em repouso e em trânsito, registro de acessos ao prontuário, perfis restritos e Relatório de Impacto à Proteção de Dados (RIPD).',['Dados sensíveis','RIPD']);
+  if (c.sector === 'Educação') add('gov',2,1,'Dados de crianças e adolescentes','O tratamento deve atender ao melhor interesse do titular (art. 14 da LGPD). Para crianças, colete consentimento específico de um dos pais ou responsável e minimize os dados coletados.',['Art. 14','Minimização']);
+  if (c.sector === 'Financeiro') add('gov',2,1,'Sigilo e regulação setorial','Além da LGPD, observe o sigilo bancário (LC 105/2001) e a política de segurança cibernética e contratação de nuvem exigida pela Resolução CMN nº 4.893/2021.',['Regulação','Cibersegurança']);
+  if (c.scores.gov >= 80) add('gov',4,2,'Rumo à certificação','Com controles maduros, avalie o alinhamento às normas ISO/IEC 27001 (segurança) e 27701 (privacidade) e programe auditorias independentes periódicas.',['ISO 27001','ISO 27701']);
+
+  const order = Object.fromEntries(PILLARS.map((p, i) => [p.id, i]));
+  return R.sort((a, b) => a.pr - b.pr || a.h - b.h || order[a.pillar] - order[b.pillar]);
+}
+
+/* ---------------- Renderização: estático ---------------- */
+function renderStatic(){
+  // marquee
+  const words = ['SaaS','PaaS','IaaS','Backup 3-2-1','FinOps','Single Source of Truth','ERP ↔ CRM','Dashboards','No-Code','Human-in-the-Loop','MFA','Menor privilégio','LGPD','Privacy by Design'];
+  const html = words.map(w => `<span class="flex items-center gap-10">${w}<span class="text-acc">✦</span></span>`).join('');
+  $('#marq').innerHTML = html; $('#marq2').innerHTML = html;
+
+  // cards dos pilares (método)
+  $('#pillar-cards').innerHTML = PILLARS.map(p => `
+    <article class="card pillar-card p-6 reveal" style="--pc:${p.color}">
+      <span class="num" aria-hidden="true">${p.n}</span>
+      <span class="pill-icon"><i data-lucide="${p.icon}"></i></span>
+      <h3 class="text-lg font-semibold mt-6 pr-10 leading-snug">${p.name}</h3>
+      <p class="text-sm text-muted mt-2 leading-relaxed">${p.desc}</p>
+      <div class="mt-6 pt-5 border-t hairline">
+        <p class="font-mono text-[10.5px] tracking-[.14em] uppercase text-coral/90">Sintomas comuns</p>
+        <ul class="mt-2.5 space-y-1.5 text-[13.5px] text-muted">${p.pain.map(x => `<li class="flex gap-2"><span class="text-coral">–</span>${x}</li>`).join('')}</ul>
+      </div>
+      <div class="mt-5">
+        <p class="font-mono text-[10.5px] tracking-[.14em] uppercase" style="color:${p.color}">Boas práticas</p>
+        <ul class="mt-2.5 space-y-1.5 text-[13.5px]">${p.good.map(x => `<li class="flex gap-2"><span style="color:${p.color}">+</span>${x}</li>`).join('')}</ul>
+      </div>
+    </article>`).join('');
+
+  // legenda de estágios
+  $('#stage-legend').innerHTML = STAGES.map((s, i) => `
+    <div class="rounded-2xl p-4 border" style="border-color:${hexA(s.color,.25)};background:${hexA(s.color,.05)}">
+      <div class="flex items-center justify-between"><span class="w-2.5 h-2.5 rounded-full" style="background:${s.color}"></span><span class="font-mono text-[11px] text-muted">${s.range}%</span></div>
+      <div class="font-semibold mt-4">${s.name}</div>
+      <p class="text-[12.5px] text-muted mt-1.5 leading-snug">${['Manual e vulnerável','Iniciativas isoladas','Integrada e na nuvem','Dados, IA e segurança como cultura'][i]}</p>
+    </div>`).join('');
+
+  // setores
+  $('#f-sector').insertAdjacentHTML('beforeend', SECTORS.map(s => `<option value="${s}">${s}</option>`).join(''));
+
+  // perguntas
+  $('#pillars-form').innerHTML = PILLARS.map((p, pi) => {
+    const qs = QUESTIONS.filter(q => q.pillar === p.id);
+    return `
+    <section class="qblock card reveal" id="blk-${p.id}" style="--pc:${p.color}">
+      <header class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-4 min-w-0">
+          <span class="pill-icon"><i data-lucide="${p.icon}"></i></span>
+          <div class="min-w-0">
+            <p class="font-mono text-xs tracking-[.18em] text-muted uppercase">Pilar ${p.n}</p>
+            <h3 class="text-xl sm:text-2xl font-semibold tracking-tight mt-1">${p.name}</h3>
+            <p class="text-sm text-muted mt-1">${p.desc}</p>
+          </div>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="font-mono text-2xl sm:text-3xl" id="bs-${p.id}" style="color:${p.color}">—</div>
+          <div class="font-mono text-[10px] text-muted uppercase tracking-widest mt-0.5">nota</div>
+        </div>
+      </header>
+      <div class="space-y-10 mt-9">${qs.map((q, qi) => renderQ(q, `${pi + 1}.${qi + 1}`)).join('')}</div>
+    </section>`;
+  }).join('');
+
+  // sidebar
+  $('#sb-total').textContent = CHOICES.length;
+  $('#sb-pillars').innerHTML = PILLARS.map(p => `
+    <a href="#blk-${p.id}" class="side-p">
+      <span class="w-2.5 h-2.5 rounded-full" style="background:${p.color}"></span>
+      <span class="text-[13.5px] truncate">${p.name}</span>
+      <span class="font-mono text-sm text-muted" id="sp-${p.id}">—</span>
+    </a>`).join('');
+
+  // cards do painel
+  $('#d-pillars').innerHTML = PILLARS.map(p => `
+    <div class="card p-6 relative overflow-hidden" style="--pc:${p.color}">
+      <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full" style="background:radial-gradient(circle,${hexA(p.color,.14)},transparent 70%)"></div>
+      <div class="relative flex items-center justify-between">
+        <span class="pill-icon !w-10 !h-10 !rounded-xl"><i data-lucide="${p.icon}"></i></span>
+        <span class="tier" id="dt-${p.id}"></span>
+      </div>
+      <p class="relative font-mono text-[11px] text-muted tracking-[.14em] uppercase mt-6">Pilar ${p.n}</p>
+      <h3 class="relative font-semibold leading-snug mt-1">${p.name}</h3>
+      <div class="relative flex items-baseline gap-1 mt-4"><span class="font-mono text-5xl tracking-tight" id="dv-${p.id}" data-v="0">0</span><span class="text-muted">/100</span></div>
+      <div class="bar mt-4"><span id="db-${p.id}" style="background:${p.color}"></span></div>
+      <p class="relative text-[12.5px] text-muted mt-4 leading-snug" id="dn-${p.id}"></p>
+    </div>`).join('');
+
+  // ticks do gauge
+  let ticks = '';
+  for (let i = 0; i < 60; i++){
+    const a = (i / 60) * Math.PI * 2, r1 = 95, r2 = i % 5 === 0 ? 99 : 97.5;
+    ticks += `<line x1="${100 + r1 * Math.cos(a)}" y1="${100 + r1 * Math.sin(a)}" x2="${100 + r2 * Math.cos(a)}" y2="${100 + r2 * Math.sin(a)}" stroke="rgba(237,232,221,${i % 5 === 0 ? .3 : .12})" stroke-width="1"/>`;
+  }
+  $('#ticks').innerHTML = ticks;
+
+  // rodapé
+  $('#f-authors').innerHTML = AUTORES.map(a => `<li>${esc(a)}</li>`).join('');
+  $('#year').textContent = new Date().getFullYear();
+}
+
+function renderQ(q, num){
+  const head = `<legend class="q-title"><span class="q-num">${num}</span><span>${q.title}</span></legend>${q.help ? `<p class="q-help">${q.help}</p>` : ''}`;
+  if (q.type === 'choice') return `
+    <fieldset class="q" id="q-${q.id}">${head}
+      <div class="q-body grid sm:grid-cols-2 gap-2.5">${q.options.map((o, i) => `
+        <label class="opt"><input type="radio" class="sr-only" name="${q.id}" value="${i}">
+          <span class="opt-card">
+            <span class="lvl" aria-hidden="true">${[0,1,2,3].map(k => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</span>
+            <span class="flex-1 min-w-0"><span class="block font-medium text-[15px] leading-snug">${o[0]}</span><span class="block text-[13px] text-muted mt-1 leading-snug">${o[1]}</span></span>
+            <span class="opt-dot" aria-hidden="true"><i data-lucide="check"></i></span>
+          </span></label>`).join('')}
+      </div>
+    </fieldset>`;
+  if (q.type === 'checks') return `
+    <fieldset class="q" id="q-${q.id}">${head}
+      <div class="q-body grid sm:grid-cols-2 gap-2.5">${q.items.map(([id, label]) => `
+        <label class="chk"><input type="checkbox" class="sr-only" name="${q.id}" value="${id}">
+          <span class="chk-card"><span class="chk-box" aria-hidden="true"><i data-lucide="check"></i></span><span>${label}</span></span></label>`).join('')}
+      </div>
+    </fieldset>`;
+  return `
+    <fieldset class="q" id="q-${q.id}">${head}
+      <div class="q-body">
+        <div class="rounded-2xl border hairline p-5 sm:p-6" style="background:rgba(255,255,255,.012)">
+          <div class="flex items-end justify-between gap-4 mb-5">
+            <output class="font-mono text-4xl sm:text-5xl tracking-tight" id="o-${q.id}" for="r-${q.id}"></output>
+            <div class="text-right"><div class="text-sm font-semibold" id="dl-${q.id}" style="color:var(--pc)"></div><div class="text-[12.5px] text-muted" id="dd-${q.id}"></div></div>
+          </div>
+          <input type="range" class="rng" id="r-${q.id}" name="${q.id}" min="${q.min}" max="${q.max}" step="${q.step}" value="${q.def}" aria-label="${esc(q.title)}">
+          <div class="flex justify-between text-[11px] font-mono text-muted mt-3"><span>${q.min}${q.unit}</span><span>${q.max}${q.unit}+</span></div>
+        </div>
+      </div>
+    </fieldset>`;
+}
+
+function paintSlider(input){
+  const q = QMAP[input.name], v = +input.value;
+  input.style.setProperty('--val', ((v - q.min) / (q.max - q.min)) * 100 + '%');
+  $('#o-' + q.id).textContent = v + q.unit.trim() + (q.unit.trim() === 'h' ? '/sem' : '');
+  const [l, d] = q.describe(v);
+  $('#dl-' + q.id).textContent = l; $('#dd-' + q.id).textContent = d;
+}
+
+/* sincroniza o DOM com o estado (demo / reset) */
+function syncForm(){
+  $('#f-name').value = state.company.name;
+  $('#f-sector').value = state.company.sector;
+  $('#f-emp').value = state.company.emp;
+  QUESTIONS.forEach(q => {
+    const v = state.ans[q.id];
+    if (q.type === 'choice') $$(`input[name="${q.id}"]`).forEach(r => { r.checked = v != null && +r.value === v; });
+    if (q.type === 'checks') $$(`input[name="${q.id}"]`).forEach(c => { c.checked = v.includes(c.value); });
+    if (q.type === 'slider') { const r = $('#r-' + q.id); r.value = v; paintSlider(r); }
+  });
+}
+
+/* ---------------- Renderização: dinâmico ---------------- */
+let radarChart = null, laudoChart = null;
+
+function update(){
+  const r = compute();
+  renderProgress(r);
+  renderPorte();
+  renderDashboard(r);
+  renderLaudo(r);
+}
+
+function renderPorte(){
+  const emp = parseInt(state.company.emp, 10) || 0;
+  const s = sizeOf(emp, state.company.sector);
+  const chip = $('#porte-chip');
+  chip.textContent = s ? s.label.replace(' empresa','') : 'Porte —';
+  chip.style.color = s ? '#C8F169' : '';
+  chip.style.borderColor = s ? 'rgba(200,241,105,.35)' : '';
+}
+
+function renderProgress(r){
+  const pct = (r.answered / r.total) * 100;
+  $('#sb-count').textContent = r.answered;
+  $('#sb-bar').style.width = pct + '%';
+  $('#mb-count').textContent = r.answered;
+  $('#mb-bar').style.width = pct + '%';
+  $('#lk-count').textContent = r.answered;
+  $('#lk-ring').style.setProperty('--p', pct + '%');
+  $('#sb-hint').textContent = r.complete ? 'Diagnóstico completo. O painel e o laudo estão prontos.' : `Faltam ${r.total - r.answered} pergunta${r.total - r.answered > 1 ? 's' : ''}-chave para liberar o painel.`;
+  PILLARS.forEach(p => {
+    const v = r.pillars[p.id];
+    $('#bs-' + p.id).textContent = v == null ? '—' : v;
+    $('#sp-' + p.id).textContent = v == null ? '—' : v;
+  });
+  const ov = r.complete ? r.overall : r.partial;
+  $('#sb-ov-label').textContent = r.complete ? 'Índice final' : 'Índice parcial';
+  $('#sb-ov').textContent = ov == null ? '—' : ov + '%';
+  const st = r.complete ? stageOf(r.overall) : null;
+  $('#sb-stage').textContent = st ? st.name : '';
+  $('#sb-stage').style.color = st ? st.color : '';
+}
+
+function renderDashboard(r){
+  $('#dash-locked').classList.toggle('hidden', r.complete);
+  $('#dash').classList.toggle('hidden', !r.complete);
+  if (!r.complete){ $('#dash-sub').textContent = 'Os resultados aparecem aqui assim que o diagnóstico estiver completo.'; return; }
+
+  const c = context(r), st = stageOf(r.overall);
+  $('#dash-sub').innerHTML = `${esc(c.name)}${c.sector ? ' · ' + esc(c.sector) : ''}${c.size ? ' · ' + c.size.label : ''}`;
+
+  // gauge
+  countTo($('#d-score'), r.overall);
+  const C = 2 * Math.PI * 80;
+  const g = $('#gauge');
+  g.style.strokeDashoffset = C * (1 - r.overall / 100);
+  g.setAttribute('stroke', st.color);
+  g.style.filter = `drop-shadow(0 0 10px ${hexA(st.color, .4)})`;
+  const b = $('#d-stage');
+  b.textContent = st.name; b.style.color = st.color; b.style.borderColor = hexA(st.color, .4); b.style.background = hexA(st.color, .08);
+  $('#d-marker').style.left = r.overall + '%';
+  $('#d-desc').textContent = st.desc;
+
+  // pilares
+  PILLARS.forEach(p => {
+    const v = r.pillars[p.id], t = tierOf(v);
+    countTo($('#dv-' + p.id), v);
+    $('#db-' + p.id).style.width = v + '%';
+    const tier = $('#dt-' + p.id);
+    tier.textContent = t.name; tier.style.color = t.color; tier.style.borderColor = hexA(t.color, .35);
+    const weakest = QUESTIONS.filter(q => q.pillar === p.id).map(q => ({ q, s: qScore(q) })).sort((a, b) => a.s - b.s)[0];
+    $('#dn-' + p.id).innerHTML = weakest.s >= 99 ? 'Todas as práticas avaliadas estão no nível máximo.' : `Maior lacuna: <span class="text-bone">${weakest.q.short}</span>`;
+  });
+
+  // radar
+  const data = PILLARS.map(p => r.pillars[p.id]);
+  if (!radarChart && window.Chart) radarChart = makeRadar();
+  if (radarChart){ radarChart.data.datasets[0].data = data; radarChart.update(); }
+
+  // nuvem
+  const cf = cloudFit(c);
+  $('#d-cloud').innerHTML = ['saas','paas','iaas'].map(k => {
+    const m = CLOUD[k], best = k === cf.best;
+    return `<div>
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0"><span class="font-mono font-semibold ${best ? 'text-acc' : ''}">${m.name}</span><span class="text-[13px] text-muted truncate">${m.full}</span>${best ? '<span class="prio" style="background:rgba(200,241,105,.12);color:#C8F169">Indicado</span>' : ''}</div>
+        <span class="font-mono text-sm ${best ? 'text-acc' : 'text-muted'}">${cf.fit[k]}%</span>
+      </div>
+      <div class="bar mt-2"><span style="width:${cf.fit[k]}%;background:${best ? '#C8F169' : 'rgba(237,232,221,.25)'}"></span></div>
+      <div class="font-mono text-[10.5px] text-muted mt-1.5">${m.ex}</div>
+    </div>`;
+  }).join('');
+  $('#d-cloud-txt').textContent = CLOUD[cf.best].text;
+
+  // automação
+  if (c.emp){
+    countTo($('#d-auto'), c.auto);
+    $('#d-fte').textContent = '≈ ' + fmt1(c.fte);
+    countTo($('#d-rework'), c.rework);
+    $('#d-auto-note').textContent = 'Premissas: 4,33 semanas/mês, 220 h/mês por colaborador e 50% das tarefas repetitivas automatizáveis.';
+  } else {
+    $('#d-auto').textContent = '—'; $('#d-auto').dataset.v = 0;
+    $('#d-fte').textContent = '—';
+    $('#d-rework').textContent = '—'; $('#d-rework').dataset.v = 0;
+    $('#d-auto-note').innerHTML = '<span class="text-gold">Informe o nº de colaboradores</span> na identificação para estimar o potencial de automação.';
+  }
+
+  // top 3
+  const recs = buildRecs(c).slice(0, 3);
+  $('#d-top').innerHTML = recs.map((x, i) => `
+    <li class="flex gap-4">
+      <span class="font-mono text-xs text-muted pt-1">0${i + 1}</span>
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="prio" style="background:${hexA(PRIO[x.pr].c,.13)};color:${PRIO[x.pr].c}">${PRIO[x.pr].name}</span>
+          <span class="font-mono text-[10.5px] text-muted">${HORIZ[x.h]}</span>
+        </div>
+        <p class="text-[14.5px] font-medium leading-snug mt-1.5">${x.title}</p>
+        <p class="text-[12px] mt-1 flex items-center gap-1.5 text-muted"><span class="w-1.5 h-1.5 rounded-full" style="background:${PMAP[x.pillar].color}"></span>${PMAP[x.pillar].name}</p>
+      </div>
+    </li>`).join('');
+  icons();
+}
+
+function makeRadar(){
+  const ctx = $('#radar');
+  return new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: [['Infraestrutura','& Nuvem'], ['Sistemas','ERP/CRM'], ['IA &','Automação'], ['Governança','& LGPD']],
+      datasets: [
+        { label:'Sua empresa', data:[0,0,0,0], backgroundColor:'rgba(200,241,105,.16)', borderColor:'#C8F169', borderWidth:2,
+          pointBackgroundColor: PILLARS.map(p => p.color), pointBorderColor:'#0B0C0A', pointBorderWidth:2, pointRadius:6, pointHoverRadius:8 },
+        { label:'Meta Líder Digital (80%)', data:[80,80,80,80], backgroundColor:'transparent', borderColor:'rgba(237,232,221,.38)', borderDash:[5,5], borderWidth:1.4, pointRadius:0, pointHoverRadius:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      animation:{ duration: reduceMotion ? 0 : 1100, easing:'easeOutQuart' },
+      layout:{ padding: 4 },
+      scales:{ r:{ min:0, max:100, beginAtZero:true,
+        ticks:{ stepSize:25, color:'rgba(143,140,130,.8)', backdropColor:'transparent', font:{ family:'Geist Mono', size:10 }, showLabelBackdrop:false },
+        grid:{ color:'rgba(237,232,221,.08)' }, angleLines:{ color:'rgba(237,232,221,.08)' },
+        pointLabels:{ color:'#EDE8DD', font:{ family:'Geist', size:12.5, weight:'500' }, padding:14 } } },
+      plugins:{
+        legend:{ position:'bottom', labels:{ color:'#8F8C82', usePointStyle:true, pointStyle:'circle', boxWidth:8, padding:18, font:{ family:'Geist', size:12.5 },
+          generateLabels: ch => ch.data.datasets.map((d, i) => ({ text:d.label, datasetIndex:i, hidden:!ch.isDatasetVisible(i), pointStyle:'circle', fontColor:'#8F8C82',
+            fillStyle: i ? 'transparent' : 'rgba(200,241,105,.55)', strokeStyle: i ? 'rgba(237,232,221,.55)' : '#C8F169', lineWidth:1.5, lineDash: i ? [3,3] : [] })) } },
+        tooltip:{ backgroundColor:'#121410', borderColor:'rgba(237,232,221,.16)', borderWidth:1, titleColor:'#EDE8DD', bodyColor:'#EDE8DD', padding:12,
+          titleFont:{ family:'Geist', weight:'600' }, bodyFont:{ family:'Geist Mono' },
+          callbacks:{ title: items => PILLARS[items[0].dataIndex].name, label: i => ` ${i.dataset.label}: ${i.raw}%` } }
+      }
+    }
+  });
+}
+
+function makeLaudoChart(){
+  return new Chart($('#l-chart'), {
+    type: 'bar',
+    data: { labels: PILLARS.map(p => p.short), datasets: [{ data:[0,0,0,0], backgroundColor: PILLARS.map(p => p.print), borderRadius:3, barThickness:26 }] },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:false,
+      scales:{
+        x:{ min:0, max:100, ticks:{ stepSize:20, color:'#6C685D', font:{ family:'Geist Mono', size:10 } }, grid:{ color:'rgba(28,27,23,.08)' }, border:{ display:false } },
+        y:{ ticks:{ color:'#1C1B17', font:{ family:'Geist', size:12, weight:'500' } }, grid:{ display:false }, border:{ color:'rgba(28,27,23,.3)' } }
+      },
+      plugins:{ legend:{ display:false }, tooltip:{ enabled:false } }
+    },
+    plugins:[{ id:'vals', afterDatasetsDraw(chart){
+      const { ctx } = chart, meta = chart.getDatasetMeta(0);
+      ctx.save(); ctx.font = '600 12px "Geist Mono", monospace'; ctx.fillStyle = '#1C1B17'; ctx.textBaseline = 'middle';
+      meta.data.forEach((bar, i) => ctx.fillText(chart.data.datasets[0].data[i] + '%', bar.x + 8, bar.y));
+      ctx.restore();
+    } }]
+  });
+}
+
+function refreshLaudoImg(){
+  if (!laudoChart || !laudoChart.width) return;
+  try { $('#l-chart-img').src = laudoChart.toBase64Image('image/png', 1); } catch (e) { /* ignore */ }
+}
+
+function renderLaudo(r){
+  $('#paper-empty').classList.toggle('hidden', r.complete);
+  $('#paper-body').classList.toggle('hidden', !r.complete);
+  if (!r.complete) return;
+
+  const c = context(r), st = stageOf(r.overall), recs = buildRecs(c);
+  const now = new Date();
+  const seed = `${c.name}|${c.sector}|${c.emp}|${now.toDateString()}`;
+  let h = 2166136261; for (const ch of seed){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  $('#l-id').textContent = `NEL-${now.getFullYear()}-${(h >>> 0).toString(36).toUpperCase().padStart(6, '0').slice(-6)}`;
+  $('#l-date').textContent = now.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+
+  const cell = (k, v, extra = '') => `<div class="py-4 pr-4 ${extra}"><dt class="font-mono text-[10px] tracking-[.16em] uppercase pm">${k}</dt><dd class="mt-1 font-medium text-[15px] leading-snug">${v}</dd></div>`;
+  $('#l-client').innerHTML =
+    cell('Empresa', esc(c.name), 'col-span-2 md:col-span-1') +
+    cell('Setor', esc(c.sector || 'Não informado')) +
+    cell('Porte', c.size ? c.size.label : 'Não informado') +
+    cell('Colaboradores', c.emp ? fmt(c.emp) : 'Não informado');
+
+  // sumário
+  $('#l-score').textContent = r.overall;
+  const ls = $('#l-stage'); ls.textContent = st.name; ls.style.background = st.color; ls.style.color = '#0B0C0A';
+  const sorted = PILLARS.map(p => ({ p, v: r.pillars[p.id] })).sort((a, b) => b.v - a.v);
+  const best = sorted[0], worst = sorted[sorted.length - 1];
+  const crit = recs.filter(x => x.pr === 1).length;
+  $('#l-headline').textContent = `Estágio ${st.name}: ${worst.v < 40 ? 'há riscos que pedem ação imediata.' : r.overall >= 80 ? 'base sólida para inovar com segurança.' : 'a base existe; agora é integrar e proteger.'}`;
+  $('#l-summary').innerHTML =
+    `<b>${esc(c.name)}</b>${c.sector && c.sector !== 'Outro' ? `, do setor de ${esc(c.sector.toLowerCase())}` : ''}${c.size ? ` (${c.size.label.toLowerCase()}${c.emp ? `, ${fmt(c.emp)} colaboradores` : ''})` : ''}, atingiu Índice de Maturidade Digital de <b>${r.overall}%</b>, ficando no estágio <b>${st.name}</b>. ${st.desc} ` +
+    `O pilar mais desenvolvido é <b>${best.p.name}</b> (${best.v}%), enquanto <b>${worst.p.name}</b> (${worst.v}%) concentra o maior gargalo e deve receber prioridade. ` +
+    `O plano a seguir reúne <b>${recs.length} recomendações</b>${crit ? `, das quais <b>${crit} ${crit > 1 ? 'são críticas' : 'é crítica'}</b> e ${crit > 1 ? 'devem' : 'deve'} ser tratada${crit > 1 ? 's' : ''} nos próximos 30 dias` : ', nenhuma delas de prioridade crítica'}.` +
+    (c.emp && state.ans.ai_hours >= 1 ? ` Estimamos ainda um potencial de <b>≈ ${fmt(c.auto)} horas/mês</b> liberáveis com IA e automação No-Code.` : '');
+
+  // tabela
+  $('#l-table').innerHTML = `<div class="rule"></div>` + PILLARS.map(p => {
+    const v = r.pillars[p.id], t = tierOf(v);
+    return `<div class="flex items-center justify-between gap-3 py-3 border-b hair">
+      <div class="flex items-center gap-3 min-w-0"><span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background:${p.print}"></span><span class="font-medium text-[14.5px] truncate">${p.name}</span></div>
+      <div class="flex items-center gap-3 shrink-0"><span class="pchip ${v < 40 ? 'pr1' : v < 70 ? 'pr2' : 'pr4'}">${t.name}</span><span class="font-mono font-semibold w-10 text-right">${v}%</span></div>
+    </div>`;
+  }).join('') + `<div class="flex items-center justify-between gap-3 py-3"><span class="font-semibold">Índice geral</span><span class="font-mono font-semibold">${r.overall}%</span></div>`;
+
+  if (!laudoChart && window.Chart) laudoChart = makeLaudoChart();
+  if (laudoChart){ laudoChart.data.datasets[0].data = PILLARS.map(p => r.pillars[p.id]); laudoChart.update(); refreshLaudoImg(); }
+
+  // nuvem
+  const cf = cloudFit(c), cm = CLOUD[cf.best];
+  $('#l-cloud-title').textContent = `Modelo indicado: ${cm.name}`;
+  $('#l-cloud-txt').textContent = cm.text;
+  $('#l-cloud-fit').innerHTML = ['saas','paas','iaas'].map(k => `
+    <div class="flex items-center gap-3 text-[13px]">
+      <span class="font-mono w-11 ${k === cf.best ? 'font-semibold' : 'pm'}">${CLOUD[k].name}</span>
+      <span class="flex-1 h-1.5 rounded-full" style="background:rgba(28,27,23,.1)"><span class="block h-full rounded-full" style="width:${cf.fit[k]}%;background:${k === cf.best ? '#1C1B17' : 'rgba(28,27,23,.3)'}"></span></span>
+      <span class="font-mono w-9 text-right ${k === cf.best ? 'font-semibold' : 'pm'}">${cf.fit[k]}%</span>
+    </div>`).join('');
+  const steps = [
+    ['Inventário e classificação','Liste sistemas, dados e dependências; classifique por criticidade e sensibilidade (LGPD).'],
+    ['Proteção antes de mover','Backup 3-2-1 validado e MFA em todas as contas antes da primeira migração.'],
+    ['Piloto controlado','Migre primeiro um sistema não crítico, como e-mail ou arquivos, e meça o resultado.'],
+    ['Migração em ondas','Mova os demais sistemas por prioridade, com plano de rollback e janela combinada.'],
+    ['Desligar o legado + FinOps','Desative o ambiente antigo, revise acessos e monitore os custos mensalmente.'],
+  ];
+  $('#l-migration').innerHTML = steps.map((s, i) => `
+    <li class="flex gap-4 py-3 border-b hair"><span class="font-mono text-[12px] pm pt-0.5">0${i + 1}</span><div><div class="font-semibold text-[14px]">${s[0]}</div><div class="text-[13px] pm mt-0.5 leading-snug">${s[1]}</div></div></li>`).join('');
+
+  // plano por pilar
+  $('#l-recs').innerHTML = PILLARS.map(p => {
+    const list = recs.filter(x => x.pillar === p.id);
+    const v = r.pillars[p.id];
+    return `<div>
+      <div class="flex items-end justify-between gap-4 pb-3 avoid" style="border-bottom:2px solid ${p.print}">
+        <div><div class="font-mono text-[10.5px] tracking-[.16em] uppercase pm">Pilar ${p.n}</div><h3 class="font-serif text-[26px] leading-tight mt-1">${p.name}</h3></div>
+        <div class="font-mono text-2xl font-semibold" style="color:${p.print}">${v}%</div>
+      </div>
+      <ol>${list.map(x => `
+        <li class="py-5 border-b hair avoid">
+          <div class="flex flex-wrap items-center gap-2"><span class="pchip pr${x.pr}">${PRIO[x.pr].name}</span><span class="pchip hz">${HORIZ[x.h]}</span></div>
+          <h4 class="font-semibold text-[16px] leading-snug mt-2.5">${x.title}</h4>
+          <p class="text-[14px] leading-relaxed mt-1.5" style="color:#3A3832">${x.body}</p>
+          ${x.tags.length ? `<p class="tag mt-2">${x.tags.join(' · ')}</p>` : ''}
+        </li>`).join('')}</ol>
+    </div>`;
+  }).join('');
+
+  // roadmap
+  const cols = [['Agora', 0], ['Próximo', 1], ['Depois', 2]];
+  $('#l-roadmap').innerHTML = cols.map(([lab, hz]) => {
+    const items = recs.filter(x => x.h === hz);
+    return `<div class="avoid">
+      <div class="rule"></div>
+      <div class="flex items-baseline justify-between mt-3"><span class="font-serif text-2xl">${lab}</span><span class="font-mono text-[11px] pm">${HORIZ[hz]}</span></div>
+      <ul class="mt-3 space-y-2.5">${items.length ? items.map(x => `
+        <li class="flex gap-2.5 text-[13.5px] leading-snug"><span class="w-2 h-2 rounded-sm mt-1.5 shrink-0" style="background:${PMAP[x.pillar].print}"></span><span>${x.title}</span></li>`).join('') : '<li class="text-[13px] pm">Sem ações neste horizonte.</li>'}
+      </ul>
+    </div>`;
+  }).join('');
+
+  // assinatura
+  $('#l-sign').innerHTML = AUTORES.map(a => `
+    <div><div class="h-10"></div><div class="rule"></div><div class="font-medium mt-2">${esc(a)}</div><div class="font-mono text-[10.5px] tracking-[.14em] uppercase pm mt-0.5">Especialista em Transformação Digital · Nelore</div></div>`).join('');
+}
+
+/* ---------------- Ações ---------------- */
+function loadDemo(){
+  const d = DEMOS[demoIdx % DEMOS.length]; demoIdx++;
+  resetState();
+  state.company = { ...d.company };
+  Object.entries(d.ans).forEach(([k, v]) => { state.ans[k] = Array.isArray(v) ? [...v] : v; });
+  syncForm(); update();
+  toast(`Caso exemplo carregado: <b>${esc(d.company.name)}</b>${DEMOS.length > 1 ? ' <span class="text-muted">(clique de novo para outro)</span>' : ''}`);
+  setTimeout(() => $('#painel').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }), 120);
+}
+
+function resetAll(){
+  resetState(); syncForm(); update();
+  toast('Respostas limpas. Comece um novo diagnóstico.');
+  $('#diagnostico').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+function goResults(e){
+  const r = compute();
+  if (!r.complete){
+    e && e.preventDefault();
+    const q = CHOICES.find(q => state.ans[q.id] == null);
+    const el = $('#q-' + q.id);
+    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block:'center' });
+    el.classList.remove('need'); void el.offsetWidth; el.classList.add('need');
+    setTimeout(() => el.classList.remove('need'), 2200);
+    toast(`Falta${r.total - r.answered > 1 ? 'm' : ''} ${r.total - r.answered} pergunta${r.total - r.answered > 1 ? 's' : ''}-chave. Levamos você até a próxima.`, 'warn');
+    return;
+  }
+  if (!state.company.name.trim()) toast('Dica: informe o nome da empresa para personalizar o laudo.', 'warn');
+}
+
+function doPrint(){
+  const r = compute();
+  if (!r.complete){
+    toast('Complete o diagnóstico ou carregue o caso exemplo antes de emitir o laudo.', 'warn');
+    $('#diagnostico').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    return;
+  }
+  refreshLaudoImg();
+  setTimeout(() => window.print(), 60);
+}
+
+/* ---------------- Inicialização ---------------- */
+function init(){
+  resetState();
+  renderStatic();
+  syncForm();
+
+  if (window.Chart){
+    Chart.defaults.font.family = 'Geist, system-ui, sans-serif';
+    Chart.defaults.color = '#8F8C82';
+  }
+
+  const form = $('#diag-form');
+  form.addEventListener('submit', e => e.preventDefault());
+  form.addEventListener('input', e => {
+    const t = e.target;
+    if (t.id === 'f-name') state.company.name = t.value;
+    else if (t.id === 'f-emp') state.company.emp = t.value;
+    else if (t.type === 'range'){ state.ans[t.name] = +t.value; paintSlider(t); }
+    else return;
+    update();
+  });
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.id === 'f-sector') state.company.sector = t.value;
+    else if (t.type === 'radio') state.ans[t.name] = +t.value;
+    else if (t.type === 'checkbox') state.ans[t.name] = $$(`input[name="${t.name}"]:checked`).map(x => x.value);
+    else return;
+    update();
+  });
+
+  $$('.js-demo').forEach(b => b.addEventListener('click', loadDemo));
+  $$('.js-reset').forEach(b => b.addEventListener('click', resetAll));
+  $$('.js-print').forEach(b => b.addEventListener('click', doPrint));
+  $$('.js-generate').forEach(b => b.addEventListener('click', goResults));
+  window.addEventListener('beforeprint', refreshLaudoImg);
+
+  // nav com fundo ao rolar
+  const nav = $('#nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 12);
+  window.addEventListener('scroll', onScroll, { passive:true }); onScroll();
+
+  // reveal
+  if ('IntersectionObserver' in window && !reduceMotion){
+    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin:'0px 0px -8% 0px', threshold:0.06 });
+    $$('.reveal').forEach(el => io.observe(el));
+
+    // link ativo + barra móvel
+    const links = $$('.nav-link');
+    const so = new IntersectionObserver(es => es.forEach(en => {
+      if (en.isIntersecting) links.forEach(l => l.classList.toggle('active', l.dataset.sec === en.target.id));
+      if (en.target.id === 'diagnostico'){
+        const m = $('#mbar');
+        m.classList.toggle('translate-y-24', !en.isIntersecting);
+        m.classList.toggle('opacity-0', !en.isIntersecting);
+        m.classList.toggle('pointer-events-none', !en.isIntersecting);
+      }
+    }), { rootMargin:'-45% 0px -50% 0px' });
+    ['metodo','diagnostico','painel','laudo'].forEach(id => so.observe(document.getElementById(id)));
+  } else {
+    $$('.reveal').forEach(el => el.classList.add('in'));
+  }
+
+  update();
+  icons();
+
+  // redesenha os gráficos quando as fontes terminam de carregar
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
+    if (radarChart) radarChart.update('none');
+    if (laudoChart){ laudoChart.update('none'); refreshLaudoImg(); }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
